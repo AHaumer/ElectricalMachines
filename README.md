@@ -1,5 +1,5 @@
 # DriveControl
-Modelica library to demonstrate the control of electric drives.
+Modelica library of machine models with parameter records.
 
 # License
 BSD-3 (see License)
