@@ -1358,11 +1358,16 @@ package ElectricalMachines "Electrical machine models with Parameter records"
 <p>Have you ever been bored by propagating all the parameters for a new type of a machine used in your models? 
 Here's the solution:
 <ul>
-<li>Build your own database of different machine parameters by extending from Modelica.Electrical.Machines.Utilities.ParameterRecords</li>
+<li>Build your own database of different machine parameters by extending from ElectricalMachines.ParameterRecords</li>
 <li>Use the machine models from this library: they're extending from the machine models of the Modelica Standard Library</li>
 <li>Propagate all necessary parameters with just one parameter record!</li>
 <li>Change operational parameters in the machine model, if desired.</li>
 </ul>
+</p>
+<h4>Note:</h4>
+<p>
+The parameter records ElectricalMachines.ParameterRecords extend from Modelica.Electrical.Machines.Utilities.ParameterRecords. 
+They are intended to replace the parameter records in the Modelica Standard Library in the future.
 </p>
 <h4>License</h4>
 <p>BSD-3</p>
