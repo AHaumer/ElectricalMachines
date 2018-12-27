@@ -3,531 +3,762 @@ package ElectricalMachines "Electrical machine models with Parameter records"
   extends Modelica.Icons.Package;
   package Examples
     extends Modelica.Icons.ExamplesPackage;
-    model DCPM_NominalOperation
-      extends Modelica.Icons.Example;
-      import Modelica.Utilities.Streams.print;
-      import Modelica.SIunits.Conversions.to_rpm;
-      parameter Modelica.SIunits.Torque tau0=
-        dcpm.data.ViNominal*dcpm.data.IaNominal/dcpm.data.wNominal
-        "Estimated initial torque";
-      QuasiStatic.DCMachines.DC_PermanentMagnet dcpm(phiMechanical(fixed=true),
-          wMechanical(fixed=true, start=dcpm.data.wNominal))
-        annotation (Placement(transformation(extent={{-30,-10},{-10,10}})));
-      Modelica.Electrical.Analog.Sensors.CurrentSensor currentSensor annotation (
-          Placement(transformation(
-            extent={{10,-10},{-10,10}},
-            rotation=90,
-            origin={-14,30})));
-      Modelica.Electrical.Analog.Sources.ConstantVoltage constantVoltage(V=dcpm.data.VaNominal)
-        annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={-80,30})));
-      Modelica.Electrical.Analog.Basic.Ground                      ground
-        annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
-      Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
-        annotation (Placement(transformation(extent={{0,-10},{20,10}})));
-      Modelica.Mechanics.Rotational.Sources.Torque torque
-        annotation (Placement(transformation(extent={{50,-10},{30,10}})));
-      Modelica.Blocks.Math.Feedback feedback
-        annotation (Placement(transformation(extent={{0,50},{20,70}})));
-      Modelica.Blocks.Sources.Constant const(k=dcpm.data.IaNominal)
-        annotation (Placement(transformation(extent={{-30,50},{-10,70}})));
-      Modelica.Blocks.Continuous.Integrator integrator(
-        k=1000,                                                initType=Modelica.Blocks.Types.Init.InitialOutput,
-        y_start=tau0)
-        annotation (Placement(transformation(extent={{30,50},{50,70}})));
-      Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={60,30})));
-    equation
-      when terminal() then
-        print("w  ="+String(to_rpm(multiSensor.w), significantDigits=16)+"rpm");
-        print("tau="+String(multiSensor.tau, significantDigits=9)+"Nm");
-      end when;
-      connect(torque.flange, multiSensor.flange_b)
-        annotation (Line(points={{30,0},{20,0}}, color={0,0,0}));
-      connect(dcpm.flange, multiSensor.flange_a)
-        annotation (Line(points={{-10,0},{0,0}}, color={0,0,0}));
-      connect(const.y, feedback.u1)
-        annotation (Line(points={{-9,60},{2,60}}, color={0,0,127}));
-      connect(feedback.y, integrator.u)
-        annotation (Line(points={{19,60},{28,60}}, color={0,0,127}));
-      connect(constantVoltage.p, currentSensor.p)
-        annotation (Line(points={{-80,40},{-14,40}}, color={0,0,255}));
-      connect(currentSensor.n, dcpm.pin_ap)
-        annotation (Line(points={{-14,20},{-14,10}}, color={0,0,255}));
-      connect(constantVoltage.n, ground.p)
-        annotation (Line(points={{-80,20},{-80,-20}}, color={0,0,255}));
-      connect(currentSensor.i, feedback.u2)
-        annotation (Line(points={{-4,30},{10,30},{10,52}}, color={0,0,127}));
-      connect(constantVoltage.n, dcpm.pin_an)
-        annotation (Line(points={{-80,20},{-26,20},{-26,10}}, color={0,0,255}));
-      connect(integrator.y, gain.u)
-        annotation (Line(points={{51,60},{60,60},{60,42}}, color={0,0,127}));
-      connect(gain.y, torque.tau)
-        annotation (Line(points={{60,19},{60,0},{52,0}}, color={0,0,127}));
-      annotation (experiment(Interval=0.001, Tolerance=1e-06));
-    end DCPM_NominalOperation;
+    package QuasiStatic
+      extends Modelica.Icons.ExamplesPackage;
+      model DCPM_NominalOperation
+        extends Modelica.Icons.Example;
+        import Modelica.Utilities.Streams.print;
+        import Modelica.SIunits.Conversions.to_rpm;
+        parameter Modelica.SIunits.Torque tau0=
+          dcpm.data.ViNominal*dcpm.data.IaNominal/dcpm.data.wNominal
+          "Estimated initial torque";
+        .ElectricalMachines.QuasiStatic.DCMachines.DC_PermanentMagnet dcpm(
+            phiMechanical(fixed=true), wMechanical(fixed=true, start=dcpm.data.wNominal))
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
+        Modelica.Electrical.Analog.Sensors.CurrentSensor currentSensor annotation (
+            Placement(transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=90,
+              origin={6,30})));
+        Modelica.Electrical.Analog.Sources.ConstantVoltage armatureVoltage(V=dcpm.data.VaNominal)
+          annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,30})));
+        Modelica.Electrical.Analog.Basic.Ground                      ground
+          annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
+        Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
+          annotation (Placement(transformation(extent={{20,-10},{40,10}})));
+        Modelica.Mechanics.Rotational.Sources.Torque torque
+          annotation (Placement(transformation(extent={{70,-10},{50,10}})));
+        Modelica.Blocks.Math.Feedback feedback
+          annotation (Placement(transformation(extent={{20,50},{40,70}})));
+        Modelica.Blocks.Sources.Constant const(k=dcpm.data.IaNominal)
+          annotation (Placement(transformation(extent={{-10,50},{10,70}})));
+        Modelica.Blocks.Continuous.Integrator integralController(
+          k=1000,
+          initType=Modelica.Blocks.Types.Init.InitialOutput,
+          y_start=tau0)
+          annotation (Placement(transformation(extent={{50,50},{70,70}})));
+        Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={80,30})));
+      equation
+        when terminal() then
+          print("w  ="+String(to_rpm(multiSensor.w), significantDigits=16)+"rpm");
+          print("tau="+String(multiSensor.tau, significantDigits=9)+"Nm");
+        end when;
+        connect(torque.flange, multiSensor.flange_b)
+          annotation (Line(points={{50,0},{40,0}}, color={0,0,0}));
+        connect(dcpm.flange, multiSensor.flange_a)
+          annotation (Line(points={{10,0},{20,0}}, color={0,0,0}));
+        connect(const.y, feedback.u1)
+          annotation (Line(points={{11,60},{22,60}},color={0,0,127}));
+        connect(feedback.y, integralController.u)
+          annotation (Line(points={{39,60},{48,60}}, color={0,0,127}));
+        connect(armatureVoltage.p, currentSensor.p)
+          annotation (Line(points={{-80,40},{6,40}},   color={0,0,255}));
+        connect(currentSensor.n, dcpm.pin_ap)
+          annotation (Line(points={{6,20},{6,10}},     color={0,0,255}));
+        connect(armatureVoltage.n, ground.p)
+          annotation (Line(points={{-80,20},{-80,-20}}, color={0,0,255}));
+        connect(currentSensor.i, feedback.u2)
+          annotation (Line(points={{16,30},{30,30},{30,52}}, color={0,0,127}));
+        connect(armatureVoltage.n, dcpm.pin_an)
+          annotation (Line(points={{-80,20},{-6,20},{-6,10}},   color={0,0,255}));
+        connect(integralController.y, gain.u)
+          annotation (Line(points={{71,60},{80,60},{80,42}}, color={0,0,127}));
+        connect(gain.y, torque.tau)
+          annotation (Line(points={{80,19},{80,0},{72,0}}, color={0,0,127}));
+        annotation (experiment(Interval=0.001, Tolerance=1e-06));
+      end DCPM_NominalOperation;
 
-    model DCEE_NominalOperation
-      extends Modelica.Icons.Example;
-      import Modelica.Utilities.Streams.print;
-      import Modelica.SIunits.Conversions.to_rpm;
-      parameter Modelica.SIunits.Torque tau0=
-        dcee.data.ViNominal*dcee.data.IaNominal/dcee.data.wNominal
-        "Estimated initial torque";
-      QuasiStatic.DCMachines.DC_ElectricalExcited dcee(phiMechanical(fixed=true),
-          wMechanical(fixed=true, start=dcee.data.wNominal))
-        annotation (Placement(transformation(extent={{-30,-10},{-10,10}})));
-      Modelica.Electrical.Analog.Sensors.CurrentSensor currentSensor annotation (
-          Placement(transformation(
-            extent={{10,-10},{-10,10}},
-            rotation=90,
-            origin={-14,30})));
-      Modelica.Electrical.Analog.Sources.ConstantVoltage constantVoltage(V=dcee.data.VaNominal)
-        annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={-80,30})));
-      Modelica.Electrical.Analog.Basic.Ground                      ground
-        annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
-      Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
-        annotation (Placement(transformation(extent={{0,-10},{20,10}})));
-      Modelica.Mechanics.Rotational.Sources.Torque torque
-        annotation (Placement(transformation(extent={{50,-10},{30,10}})));
-      Modelica.Blocks.Math.Feedback feedback
-        annotation (Placement(transformation(extent={{0,50},{20,70}})));
-      Modelica.Blocks.Sources.Constant const(k=dcee.data.IaNominal)
-        annotation (Placement(transformation(extent={{-30,50},{-10,70}})));
-      Modelica.Blocks.Continuous.Integrator integrator(
-        k=1000,                                                initType=Modelica.Blocks.Types.Init.InitialOutput,
-        y_start=tau0)
-        annotation (Placement(transformation(extent={{30,50},{50,70}})));
-      Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={60,30})));
-    equation
-      when terminal() then
-        print("w  ="+String(to_rpm(multiSensor.w), significantDigits=16)+"rpm");
-        print("tau="+String(multiSensor.tau, significantDigits=9)+"Nm");
-      end when;
-      connect(torque.flange, multiSensor.flange_b)
-        annotation (Line(points={{30,0},{20,0}}, color={0,0,0}));
-      connect(dcee.flange, multiSensor.flange_a)
-        annotation (Line(points={{-10,0},{0,0}}, color={0,0,0}));
-      connect(const.y, feedback.u1)
-        annotation (Line(points={{-9,60},{2,60}}, color={0,0,127}));
-      connect(feedback.y, integrator.u)
-        annotation (Line(points={{19,60},{28,60}}, color={0,0,127}));
-      connect(constantVoltage.p, currentSensor.p)
-        annotation (Line(points={{-80,40},{-14,40}}, color={0,0,255}));
-      connect(currentSensor.n, dcee.pin_ap)
-        annotation (Line(points={{-14,20},{-14,10}}, color={0,0,255}));
-      connect(constantVoltage.n, ground.p)
-        annotation (Line(points={{-80,20},{-80,-20}}, color={0,0,255}));
-      connect(currentSensor.i, feedback.u2)
-        annotation (Line(points={{-4,30},{10,30},{10,52}}, color={0,0,127}));
-      connect(ground.p, dcee.pin_en)
-        annotation (Line(points={{-80,-20},{-30,-20},{-30,-6}}, color={0,0,255}));
-      connect(constantVoltage.p, dcee.pin_ep)
-        annotation (Line(points={{-80,40},{-30,40},{-30,6}}, color={0,0,255}));
-      connect(constantVoltage.n, dcee.pin_an)
-        annotation (Line(points={{-80,20},{-26,20},{-26,10}}, color={0,0,255}));
-      connect(integrator.y, gain.u)
-        annotation (Line(points={{51,60},{60,60},{60,42}}, color={0,0,127}));
-      connect(gain.y, torque.tau)
-        annotation (Line(points={{60,19},{60,0},{52,0}}, color={0,0,127}));
-      annotation (experiment(Interval=0.001, Tolerance=1e-06));
-    end DCEE_NominalOperation;
+      model DCEE_NominalOperation
+        extends Modelica.Icons.Example;
+        import Modelica.Utilities.Streams.print;
+        import Modelica.SIunits.Conversions.to_rpm;
+        parameter Modelica.SIunits.Voltage VeNominal=
+          Modelica.Electrical.Machines.Thermal.convertResistance(
+          dcee.data.Re, dcee.data.TeRef, dcee.data.alpha20e, dcee.data.TeNominal)*dcee.data.IeNominal
+          "Nominal excitation voltage";
+        parameter Modelica.SIunits.Torque tau0=
+          dcee.data.ViNominal*dcee.data.IaNominal/dcee.data.wNominal
+          "Estimated initial torque";
+        .ElectricalMachines.QuasiStatic.DCMachines.DC_ElectricalExcited dcee(
+            phiMechanical(fixed=true), wMechanical(fixed=true, start=dcee.data.wNominal))
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
+        Modelica.Electrical.Analog.Sensors.CurrentSensor currentSensor annotation (
+            Placement(transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=90,
+              origin={6,30})));
+        Modelica.Electrical.Analog.Sources.ConstantVoltage armatureVoltage(V=dcee.data.VaNominal)
+          annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,30})));
+        Modelica.Electrical.Analog.Basic.Ground                      ground
+          annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
+        Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
+          annotation (Placement(transformation(extent={{20,-10},{40,10}})));
+        Modelica.Mechanics.Rotational.Sources.Torque torque
+          annotation (Placement(transformation(extent={{70,-10},{50,10}})));
+        Modelica.Blocks.Math.Feedback feedback
+          annotation (Placement(transformation(extent={{20,50},{40,70}})));
+        Modelica.Blocks.Sources.Constant const(k=dcee.data.IaNominal)
+          annotation (Placement(transformation(extent={{-10,50},{10,70}})));
+        Modelica.Blocks.Continuous.Integrator integralController(
+          k=1000,
+          initType=Modelica.Blocks.Types.Init.InitialOutput,
+          y_start=tau0)
+          annotation (Placement(transformation(extent={{50,50},{70,70}})));
+        Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={80,30})));
+        Modelica.Electrical.Analog.Sources.ConstantVoltage excitationVoltage(V=
+              VeNominal) annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=90,
+              origin={-30,-10})));
+        Modelica.Electrical.Analog.Basic.Ground                      groundE
+          annotation (Placement(transformation(extent={{-40,-50},{-20,-30}})));
+      equation
+        when terminal() then
+          print("w  ="+String(to_rpm(multiSensor.w), significantDigits=16)+"rpm");
+          print("tau="+String(multiSensor.tau, significantDigits=9)+"Nm");
+        end when;
+        connect(torque.flange, multiSensor.flange_b)
+          annotation (Line(points={{50,0},{40,0}}, color={0,0,0}));
+        connect(dcee.flange, multiSensor.flange_a)
+          annotation (Line(points={{10,0},{20,0}}, color={0,0,0}));
+        connect(const.y, feedback.u1)
+          annotation (Line(points={{11,60},{22,60}},color={0,0,127}));
+        connect(feedback.y, integralController.u)
+          annotation (Line(points={{39,60},{48,60}}, color={0,0,127}));
+        connect(armatureVoltage.p, currentSensor.p)
+          annotation (Line(points={{-80,40},{6,40}},   color={0,0,255}));
+        connect(currentSensor.n, dcee.pin_ap)
+          annotation (Line(points={{6,20},{6,10}},     color={0,0,255}));
+        connect(armatureVoltage.n, ground.p)
+          annotation (Line(points={{-80,20},{-80,-20}}, color={0,0,255}));
+        connect(currentSensor.i, feedback.u2)
+          annotation (Line(points={{16,30},{30,30},{30,52}}, color={0,0,127}));
+        connect(integralController.y, gain.u)
+          annotation (Line(points={{71,60},{80,60},{80,42}}, color={0,0,127}));
+        connect(gain.y, torque.tau)
+          annotation (Line(points={{80,19},{80,0},{72,0}}, color={0,0,127}));
+        connect(armatureVoltage.n, dcee.pin_an)
+          annotation (Line(points={{-80,20},{-6,20},{-6,10}}, color={0,0,255}));
+        connect(excitationVoltage.p, dcee.pin_ep)
+          annotation (Line(points={{-30,0},{-30,6},{-10,6}}, color={0,0,255}));
+        connect(excitationVoltage.n, groundE.p)
+          annotation (Line(points={{-30,-20},{-30,-30}},           color={0,0,255}));
+        connect(excitationVoltage.n, dcee.pin_en)
+          annotation (Line(points={{-30,-20},{-10,-20},{-10,-6}}, color={0,0,255}));
+        annotation (experiment(Interval=0.001, Tolerance=1e-06));
+      end DCEE_NominalOperation;
 
-    model DCSE_NominalOperation
-      extends Modelica.Icons.Example;
-      import Modelica.Utilities.Streams.print;
-      import Modelica.SIunits.Conversions.to_rpm;
-      parameter Modelica.SIunits.Torque tau0=
-        dcse.data.ViNominal*dcse.data.IaNominal/dcse.data.wNominal
-        "Estimated initial torque";
-      QuasiStatic.DCMachines.DC_SeriesExcited dcse(phiMechanical(fixed=true),
-          wMechanical(fixed=true, start=dcse.data.wNominal))
-        annotation (Placement(transformation(extent={{-30,-10},{-10,10}})));
-      Modelica.Electrical.Analog.Sensors.CurrentSensor currentSensor annotation (
-          Placement(transformation(
-            extent={{10,-10},{-10,10}},
-            rotation=90,
-            origin={-14,30})));
-      Modelica.Electrical.Analog.Sources.ConstantVoltage constantVoltage(V=dcse.data.VaNominal)
-        annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={-80,30})));
-      Modelica.Electrical.Analog.Basic.Ground                      ground
-        annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
-      Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
-        annotation (Placement(transformation(extent={{0,-10},{20,10}})));
-      Modelica.Mechanics.Rotational.Sources.Torque torque
-        annotation (Placement(transformation(extent={{50,-10},{30,10}})));
-      Modelica.Blocks.Math.Feedback feedback
-        annotation (Placement(transformation(extent={{0,50},{20,70}})));
-      Modelica.Blocks.Sources.Constant const(k=dcse.data.IaNominal)
-        annotation (Placement(transformation(extent={{-30,50},{-10,70}})));
-      Modelica.Blocks.Continuous.Integrator integrator(
-        k=1000,                                                initType=Modelica.Blocks.Types.Init.InitialOutput,
-        y_start=tau0)
-        annotation (Placement(transformation(extent={{30,50},{50,70}})));
-      Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={60,30})));
-    equation
-      when terminal() then
-        print("w  ="+String(to_rpm(multiSensor.w), significantDigits=16)+"rpm");
-        print("tau="+String(multiSensor.tau, significantDigits=9)+"Nm");
-      end when;
-      connect(torque.flange, multiSensor.flange_b)
-        annotation (Line(points={{30,0},{20,0}}, color={0,0,0}));
-      connect(dcse.flange, multiSensor.flange_a)
-        annotation (Line(points={{-10,0},{0,0}}, color={0,0,0}));
-      connect(const.y, feedback.u1)
-        annotation (Line(points={{-9,60},{2,60}}, color={0,0,127}));
-      connect(feedback.y, integrator.u)
-        annotation (Line(points={{19,60},{28,60}}, color={0,0,127}));
-      connect(constantVoltage.p, currentSensor.p)
-        annotation (Line(points={{-80,40},{-14,40}}, color={0,0,255}));
-      connect(currentSensor.n, dcse.pin_ap)
-        annotation (Line(points={{-14,20},{-14,10}}, color={0,0,255}));
-      connect(constantVoltage.n, ground.p)
-        annotation (Line(points={{-80,20},{-80,-20}}, color={0,0,255}));
-      connect(currentSensor.i, feedback.u2)
-        annotation (Line(points={{-4,30},{10,30},{10,52}}, color={0,0,127}));
-      connect(ground.p, dcse.pin_en)
-        annotation (Line(points={{-80,-20},{-30,-20},{-30,-6}}, color={0,0,255}));
-      connect(dcse.pin_an, dcse.pin_ep)
-        annotation (Line(points={{-26,10},{-30,10},{-30,6}}, color={0,0,255}));
-      connect(integrator.y, gain.u)
-        annotation (Line(points={{51,60},{60,60},{60,42}}, color={0,0,127}));
-      connect(gain.y, torque.tau)
-        annotation (Line(points={{60,19},{60,0},{52,0}}, color={0,0,127}));
-      annotation (experiment(Interval=0.001, Tolerance=1e-06));
-    end DCSE_NominalOperation;
+      model DCSE_NominalOperation
+        extends Modelica.Icons.Example;
+        import Modelica.Utilities.Streams.print;
+        import Modelica.SIunits.Conversions.to_rpm;
+        parameter Modelica.SIunits.Torque tau0=
+          dcse.data.ViNominal*dcse.data.IaNominal/dcse.data.wNominal
+          "Estimated initial torque";
+        .ElectricalMachines.QuasiStatic.DCMachines.DC_SeriesExcited dcse(
+            phiMechanical(fixed=true), wMechanical(fixed=true, start=dcse.data.wNominal))
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
+        Modelica.Electrical.Analog.Sensors.CurrentSensor currentSensor annotation (
+            Placement(transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=90,
+              origin={6,30})));
+        Modelica.Electrical.Analog.Sources.ConstantVoltage armatureVoltage(V=dcse.data.VaNominal)
+          annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,30})));
+        Modelica.Electrical.Analog.Basic.Ground                      ground
+          annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
+        Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
+          annotation (Placement(transformation(extent={{20,-10},{40,10}})));
+        Modelica.Mechanics.Rotational.Sources.Torque torque
+          annotation (Placement(transformation(extent={{70,-10},{50,10}})));
+        Modelica.Blocks.Math.Feedback feedback
+          annotation (Placement(transformation(extent={{20,50},{40,70}})));
+        Modelica.Blocks.Sources.Constant const(k=dcse.data.IaNominal)
+          annotation (Placement(transformation(extent={{-10,50},{10,70}})));
+        Modelica.Blocks.Continuous.Integrator integralController(
+          k=1000,
+          initType=Modelica.Blocks.Types.Init.InitialOutput,
+          y_start=tau0)
+          annotation (Placement(transformation(extent={{50,50},{70,70}})));
+        Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={80,30})));
+      equation
+        when terminal() then
+          print("w  ="+String(to_rpm(multiSensor.w), significantDigits=16)+"rpm");
+          print("tau="+String(multiSensor.tau, significantDigits=9)+"Nm");
+        end when;
+        connect(torque.flange, multiSensor.flange_b)
+          annotation (Line(points={{50,0},{40,0}}, color={0,0,0}));
+        connect(dcse.flange, multiSensor.flange_a)
+          annotation (Line(points={{10,0},{20,0}}, color={0,0,0}));
+        connect(const.y, feedback.u1)
+          annotation (Line(points={{11,60},{22,60}},color={0,0,127}));
+        connect(feedback.y, integralController.u)
+          annotation (Line(points={{39,60},{48,60}}, color={0,0,127}));
+        connect(armatureVoltage.p, currentSensor.p)
+          annotation (Line(points={{-80,40},{6,40}},   color={0,0,255}));
+        connect(currentSensor.n, dcse.pin_ap)
+          annotation (Line(points={{6,20},{6,10}},     color={0,0,255}));
+        connect(armatureVoltage.n, ground.p)
+          annotation (Line(points={{-80,20},{-80,-20}}, color={0,0,255}));
+        connect(currentSensor.i, feedback.u2)
+          annotation (Line(points={{16,30},{30,30},{30,52}}, color={0,0,127}));
+        connect(ground.p, dcse.pin_en)
+          annotation (Line(points={{-80,-20},{-10,-20},{-10,-6}}, color={0,0,255}));
+        connect(dcse.pin_an, dcse.pin_ep)
+          annotation (Line(points={{-6,10},{-10,10},{-10,6}},  color={0,0,255}));
+        connect(integralController.y, gain.u)
+          annotation (Line(points={{71,60},{80,60},{80,42}}, color={0,0,127}));
+        connect(gain.y, torque.tau)
+          annotation (Line(points={{80,19},{80,0},{72,0}}, color={0,0,127}));
+        annotation (experiment(Interval=0.001, Tolerance=1e-06));
+      end DCSE_NominalOperation;
 
-    model IMC_NominalOperation
-      extends Modelica.Icons.Example;
-      import Modelica.Constants.pi;
-      import Modelica.Utilities.Streams.print;
-      import Modelica.SIunits.Conversions.to_rpm;
-      parameter Modelica.SIunits.Torque tau0=
-        imc.data.m*(imc.data.VsNominal*imc.data.IsNominal*0.875 - imc.data.Rs*imc.data.IsNominal^2)/(2*pi*imc.data.fsNominal/imc.data.p)
-        "Estimated initial torque";
-      QuasiStatic.FundamentalWave.IM_SquirrelCage imc(gamma(fixed=true),
-          wMechanical(fixed=true, start=imc.data.wNominal))
-        annotation (Placement(transformation(extent={{-30,-10},{-10,10}})));
-      Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
-        terminalBox(m=imc.m, terminalConnection="Y")
-        annotation (Placement(transformation(extent={{-30,6},{-10,26}})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.CurrentQuasiRMSSensor
-        currentQuasiRMSSensor(m=imc.m) annotation (Placement(transformation(
-            extent={{10,-10},{-10,10}},
-            rotation=90,
-            origin={-20,30})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Sources.VoltageSource
-        voltageSource(
-        m=imc.m,
-        gamma(fixed=true, start=0),
-        f=imc.data.fsNominal,
-        V=fill(imc.data.VsNominal, imc.m)) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={-80,30})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Basic.Star star(m=imc.m)
-        annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={-80,0})));
-      Modelica.Electrical.QuasiStationary.SinglePhase.Basic.Ground ground
-        annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
-      Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
-        annotation (Placement(transformation(extent={{0,-10},{20,10}})));
-      Modelica.Mechanics.Rotational.Sources.Torque torque
-        annotation (Placement(transformation(extent={{50,-10},{30,10}})));
-      Modelica.Blocks.Math.Feedback feedback
-        annotation (Placement(transformation(extent={{0,50},{20,70}})));
-      Modelica.Blocks.Sources.Constant const(k=imc.data.IsNominal)
-        annotation (Placement(transformation(extent={{-30,50},{-10,70}})));
-      Modelica.Blocks.Continuous.Integrator integrator(
-        k=1000,                                                initType=Modelica.Blocks.Types.Init.InitialOutput,
-        y_start=tau0)
-        annotation (Placement(transformation(extent={{30,50},{50,70}})));
-      Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={60,30})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
-        powerSensor
-        annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
-    equation
-      when terminal() then
-        print("w  ="+String(to_rpm(multiSensor.w), significantDigits=16)+"rpm");
-        print("tau="+String(multiSensor.tau, significantDigits=9)+"Nm");
-        print("pf ="+String(powerSensor.y.re/powerSensor.abs_y, significantDigits=9));
-      end when;
-      connect(terminalBox.plug_sn, imc.plug_sn)
-        annotation (Line(points={{-26,10},{-26,10}}, color={85,170,255}));
-      connect(terminalBox.plug_sp, imc.plug_sp)
-        annotation (Line(points={{-14,10},{-14,10}}, color={85,170,255}));
-      connect(currentQuasiRMSSensor.plug_n, terminalBox.plugSupply)
-        annotation (Line(points={{-20,20},{-20,12}}, color={85,170,255}));
-      connect(ground.pin, terminalBox.starpoint) annotation (Line(points={{-80,-20},
-              {-70,-20},{-70,12},{-29,12}}, color={85,170,255}));
-      connect(torque.flange, multiSensor.flange_b)
-        annotation (Line(points={{30,0},{20,0}}, color={0,0,0}));
-      connect(imc.flange, multiSensor.flange_a)
-        annotation (Line(points={{-10,0},{0,0}}, color={0,0,0}));
-      connect(currentQuasiRMSSensor.I, feedback.u2)
-        annotation (Line(points={{-10,30},{10,30},{10,52}}, color={0,0,127}));
-      connect(const.y, feedback.u1)
-        annotation (Line(points={{-9,60},{2,60}}, color={0,0,127}));
-      connect(feedback.y, integrator.u)
-        annotation (Line(points={{19,60},{28,60}}, color={0,0,127}));
-      connect(star.pin_n, ground.pin)
-        annotation (Line(points={{-80,-10},{-80,-20}}, color={85,170,255}));
-      connect(voltageSource.plug_n, star.plug_p)
-        annotation (Line(points={{-80,20},{-80,10}}, color={85,170,255}));
-      connect(integrator.y, gain.u)
-        annotation (Line(points={{51,60},{60,60},{60,42}}, color={0,0,127}));
-      connect(gain.y, torque.tau)
-        annotation (Line(points={{60,19},{60,0},{52,0}}, color={0,0,127}));
-      connect(voltageSource.plug_p, powerSensor.currentP)
-        annotation (Line(points={{-80,40},{-60,40}}, color={85,170,255}));
-      connect(powerSensor.currentN, currentQuasiRMSSensor.plug_p)
-        annotation (Line(points={{-40,40},{-20,40}}, color={85,170,255}));
-      connect(powerSensor.currentP, powerSensor.voltageP)
-        annotation (Line(points={{-60,40},{-60,50},{-50,50}}, color={85,170,255}));
-      connect(voltageSource.plug_n, powerSensor.voltageN)
-        annotation (Line(points={{-80,20},{-50,20},{-50,30}}, color={85,170,255}));
-      annotation (experiment(Interval=0.001, Tolerance=1e-06));
-    end IMC_NominalOperation;
+      model IMC_NominalOperation
+        extends Modelica.Icons.Example;
+        import Modelica.Constants.pi;
+        import Modelica.Utilities.Streams.print;
+        import Modelica.SIunits.Conversions.to_rpm;
+        parameter Modelica.SIunits.Torque tau0=161.401185 "Estimated initial torque";
+        Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
+        .ElectricalMachines.QuasiStatic.FundamentalWave.IM_SquirrelCage imc(gamma(
+              fixed=true), wMechanical(fixed=true, start=imc.data.wNominal))
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
+        Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
+          terminalBox(m=imc.m, terminalConnection="Y")
+          annotation (Placement(transformation(extent={{-10,6},{10,26}})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.CurrentQuasiRMSSensor
+          currentQuasiRMSSensor(m=imc.m) annotation (Placement(transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=90,
+              origin={0,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sources.VoltageSource
+          voltageSource(
+          m=imc.m,
+          gamma(fixed=true, start=0),
+          f=imc.data.fsNominal,
+          V=fill(imc.data.VsNominal, imc.m)) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Basic.Star star(m=imc.m)
+          annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,0})));
+        Modelica.Electrical.QuasiStationary.SinglePhase.Basic.Ground ground
+          annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
+        Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
+          annotation (Placement(transformation(extent={{20,-10},{40,10}})));
+        Modelica.Mechanics.Rotational.Sources.Torque torque
+          annotation (Placement(transformation(extent={{70,-10},{50,10}})));
+        Modelica.Blocks.Math.Feedback feedback
+          annotation (Placement(transformation(extent={{20,50},{40,70}})));
+        Modelica.Blocks.Sources.Constant const(k=imc.data.IsNominal)
+          annotation (Placement(transformation(extent={{-10,50},{10,70}})));
+        Modelica.Blocks.Continuous.Integrator integralController(
+          k=1000,
+          initType=Modelica.Blocks.Types.Init.InitialOutput,
+          y_start=tau0)
+          annotation (Placement(transformation(extent={{50,50},{70,70}})));
+        Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={80,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
+          powerSensor
+          annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
+      equation
+        when terminal() then
+          print("w  ="+String(to_rpm(multiSensor.w), significantDigits=16)+"rpm");
+          print("tau="+String(multiSensor.tau, significantDigits=9)+"Nm");
+          print("pf ="+String(pf, significantDigits=9));
+        end when;
+        connect(terminalBox.plug_sn, imc.plug_sn)
+          annotation (Line(points={{-6,10},{-6,10}},   color={85,170,255}));
+        connect(terminalBox.plug_sp, imc.plug_sp)
+          annotation (Line(points={{6,10},{6,10}},     color={85,170,255}));
+        connect(currentQuasiRMSSensor.plug_n, terminalBox.plugSupply)
+          annotation (Line(points={{0,20},{0,12}},     color={85,170,255}));
+        connect(ground.pin, terminalBox.starpoint) annotation (Line(points={{-80,-20},
+                {-70,-20},{-70,12},{-9,12}},  color={85,170,255}));
+        connect(torque.flange, multiSensor.flange_b)
+          annotation (Line(points={{50,0},{40,0}}, color={0,0,0}));
+        connect(imc.flange, multiSensor.flange_a)
+          annotation (Line(points={{10,0},{20,0}}, color={0,0,0}));
+        connect(currentQuasiRMSSensor.I, feedback.u2)
+          annotation (Line(points={{10,30},{30,30},{30,52}},  color={0,0,127}));
+        connect(const.y, feedback.u1)
+          annotation (Line(points={{11,60},{22,60}},color={0,0,127}));
+        connect(feedback.y, integralController.u)
+          annotation (Line(points={{39,60},{48,60}}, color={0,0,127}));
+        connect(star.pin_n, ground.pin)
+          annotation (Line(points={{-80,-10},{-80,-20}}, color={85,170,255}));
+        connect(voltageSource.plug_n, star.plug_p)
+          annotation (Line(points={{-80,20},{-80,10}}, color={85,170,255}));
+        connect(integralController.y, gain.u)
+          annotation (Line(points={{71,60},{80,60},{80,42}}, color={0,0,127}));
+        connect(gain.y, torque.tau)
+          annotation (Line(points={{80,19},{80,0},{72,0}}, color={0,0,127}));
+        connect(voltageSource.plug_p, powerSensor.currentP)
+          annotation (Line(points={{-80,40},{-60,40}}, color={85,170,255}));
+        connect(powerSensor.currentN, currentQuasiRMSSensor.plug_p)
+          annotation (Line(points={{-40,40},{0,40}},   color={85,170,255}));
+        connect(powerSensor.currentP, powerSensor.voltageP)
+          annotation (Line(points={{-60,40},{-60,50},{-50,50}}, color={85,170,255}));
+        connect(voltageSource.plug_n, powerSensor.voltageN)
+          annotation (Line(points={{-80,20},{-50,20},{-50,30}}, color={85,170,255}));
+        annotation (experiment(Interval=0.001, Tolerance=1e-06));
+      end IMC_NominalOperation;
 
-    model IMS_NominalOperation
-      extends Modelica.Icons.Example;
-      import Modelica.Constants.pi;
-      import Modelica.Utilities.Streams.print;
-      import Modelica.SIunits.Conversions.to_rpm;
-      parameter Modelica.SIunits.Torque tau0=
-        ims.data.m*(ims.data.VsNominal*ims.data.IsNominal*0.875 - ims.data.Rs*ims.data.IsNominal^2)/(2*pi*ims.data.fsNominal/ims.data.p)
-        "Estimated initial torque";
-      QuasiStatic.FundamentalWave.IM_SlipRing     ims(gamma(fixed=true),
-          wMechanical(fixed=true, start=ims.data.wNominal))
-        annotation (Placement(transformation(extent={{-30,-10},{-10,10}})));
-      Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
-        terminalBox(m=ims.m, terminalConnection="Y")
-        annotation (Placement(transformation(extent={{-30,6},{-10,26}})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.CurrentQuasiRMSSensor
-        currentQuasiRMSSensor(m=ims.m) annotation (Placement(transformation(
-            extent={{10,-10},{-10,10}},
-            rotation=90,
-            origin={-20,30})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Sources.VoltageSource
-        voltageSource(
-        m=ims.m,
-        gamma(fixed=true, start=0),
-        f=ims.data.fsNominal,
-        V=fill(ims.data.VsNominal, ims.m)) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={-80,30})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Basic.Star star(m=ims.m)
-        annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={-80,0})));
-      Modelica.Electrical.QuasiStationary.SinglePhase.Basic.Ground ground
-        annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
-      Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
-        annotation (Placement(transformation(extent={{0,-10},{20,10}})));
-      Modelica.Mechanics.Rotational.Sources.Torque torque
-        annotation (Placement(transformation(extent={{50,-10},{30,10}})));
-      Modelica.Blocks.Math.Feedback feedback
-        annotation (Placement(transformation(extent={{0,50},{20,70}})));
-      Modelica.Blocks.Sources.Constant const(k=ims.data.IsNominal)
-        annotation (Placement(transformation(extent={{-30,50},{-10,70}})));
-      Modelica.Blocks.Continuous.Integrator integrator(
-        k=1000,                                                initType=Modelica.Blocks.Types.Init.InitialOutput,
-        y_start=tau0)
-        annotation (Placement(transformation(extent={{30,50},{50,70}})));
-      Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
-        terminalBox1(m=ims.m, terminalConnection="Y")
-        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={-36,0})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Basic.Star star1(m=ims.m)
-        annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={-50,-10})));
-      Modelica.Electrical.QuasiStationary.SinglePhase.Basic.Ground ground1
-        annotation (Placement(transformation(extent={{-60,-50},{-40,-30}})));
-      Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={60,30})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
-        powerSensor
-        annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
-    equation
-      when terminal() then
-        print("w  ="+String(to_rpm(multiSensor.w), significantDigits=16)+"rpm");
-        print("tau="+String(multiSensor.tau, significantDigits=9)+"Nm");
-        print("pf ="+String(powerSensor.y.re/powerSensor.abs_y, significantDigits=9));
-      end when;
-      connect(terminalBox.plug_sn,ims. plug_sn)
-        annotation (Line(points={{-26,10},{-26,10}}, color={85,170,255}));
-      connect(terminalBox.plug_sp,ims. plug_sp)
-        annotation (Line(points={{-14,10},{-14,10}}, color={85,170,255}));
-      connect(currentQuasiRMSSensor.plug_n, terminalBox.plugSupply)
-        annotation (Line(points={{-20,20},{-20,12}}, color={85,170,255}));
-      connect(star.pin_n, ground.pin)
-        annotation (Line(points={{-80,-10},{-80,-20}}, color={85,170,255}));
-      connect(voltageSource.plug_n, star.plug_p)
-        annotation (Line(points={{-80,20},{-80,10}}, color={85,170,255}));
-      connect(ground.pin, terminalBox.starpoint) annotation (Line(points={{-80,-20},
-              {-70,-20},{-70,12},{-29,12}}, color={85,170,255}));
-      connect(torque.flange, multiSensor.flange_b)
-        annotation (Line(points={{30,0},{20,0}}, color={0,0,0}));
-      connect(ims.flange, multiSensor.flange_a)
-        annotation (Line(points={{-10,0},{0,0}}, color={0,0,0}));
-      connect(currentQuasiRMSSensor.I, feedback.u2)
-        annotation (Line(points={{-10,30},{10,30},{10,52}}, color={0,0,127}));
-      connect(const.y, feedback.u1)
-        annotation (Line(points={{-9,60},{2,60}}, color={0,0,127}));
-      connect(feedback.y, integrator.u)
-        annotation (Line(points={{19,60},{28,60}}, color={0,0,127}));
-      connect(terminalBox1.plug_sp, ims.plug_rp)
-        annotation (Line(points={{-30,6},{-30,6}}, color={85,170,255}));
-      connect(terminalBox1.plug_sn, ims.plug_rn)
-        annotation (Line(points={{-30,-6},{-30,-6}}, color={85,170,255}));
-      connect(star1.plug_p, terminalBox1.plugSupply)
-        annotation (Line(points={{-50,0},{-32,0}}, color={85,170,255}));
-      connect(star1.pin_n, ground1.pin)
-        annotation (Line(points={{-50,-20},{-50,-30}}, color={85,170,255}));
-      connect(ground1.pin, terminalBox1.starpoint) annotation (Line(points={{
-              -50,-30},{-32,-30},{-32,-9}}, color={85,170,255}));
-      connect(integrator.y, gain.u)
-        annotation (Line(points={{51,60},{60,60},{60,42}}, color={0,0,127}));
-      connect(gain.y, torque.tau)
-        annotation (Line(points={{60,19},{60,0},{52,0}}, color={0,0,127}));
-      connect(voltageSource.plug_p, powerSensor.currentP)
-        annotation (Line(points={{-80,40},{-60,40}}, color={85,170,255}));
-      connect(powerSensor.currentN, currentQuasiRMSSensor.plug_p)
-        annotation (Line(points={{-40,40},{-20,40}}, color={85,170,255}));
-      connect(powerSensor.currentP, powerSensor.voltageP)
-        annotation (Line(points={{-60,40},{-60,50},{-50,50}}, color={85,170,255}));
-      connect(voltageSource.plug_n, powerSensor.voltageN)
-        annotation (Line(points={{-80,20},{-50,20},{-50,30}}, color={85,170,255}));
-      annotation (experiment(Interval=0.001, Tolerance=1e-06));
-    end IMS_NominalOperation;
+      model IMS_NominalOperation
+        extends Modelica.Icons.Example;
+        import Modelica.Constants.pi;
+        import Modelica.Utilities.Streams.print;
+        import Modelica.SIunits.Conversions.to_rpm;
+        parameter Modelica.SIunits.Torque tau0=161.401185 "Estimated initial torque";
+        Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
+        .ElectricalMachines.QuasiStatic.FundamentalWave.IM_SlipRing ims(gamma(
+              fixed=true), wMechanical(fixed=true, start=ims.data.wNominal))
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
+        Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
+          terminalBox(m=ims.m, terminalConnection="Y")
+          annotation (Placement(transformation(extent={{-10,6},{10,26}})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.CurrentQuasiRMSSensor
+          currentQuasiRMSSensor(m=ims.m) annotation (Placement(transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=90,
+              origin={0,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sources.VoltageSource
+          voltageSource(
+          m=ims.m,
+          gamma(fixed=true, start=0),
+          f=ims.data.fsNominal,
+          V=fill(ims.data.VsNominal, ims.m)) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Basic.Star star(m=ims.m)
+          annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,0})));
+        Modelica.Electrical.QuasiStationary.SinglePhase.Basic.Ground ground
+          annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
+        Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
+          annotation (Placement(transformation(extent={{20,-10},{40,10}})));
+        Modelica.Mechanics.Rotational.Sources.Torque torque
+          annotation (Placement(transformation(extent={{70,-10},{50,10}})));
+        Modelica.Blocks.Math.Feedback feedback
+          annotation (Placement(transformation(extent={{20,50},{40,70}})));
+        Modelica.Blocks.Sources.Constant const(k=ims.data.IsNominal)
+          annotation (Placement(transformation(extent={{-10,50},{10,70}})));
+        Modelica.Blocks.Continuous.Integrator integralController(
+          k=1000,
+          initType=Modelica.Blocks.Types.Init.InitialOutput,
+          y_start=tau0)
+          annotation (Placement(transformation(extent={{50,50},{70,70}})));
+        Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
+          terminalBox1(m=ims.m, terminalConnection="Y")
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={-16,0})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Basic.Star starR(m=ims.m)
+          annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-30,-10})));
+        Modelica.Electrical.QuasiStationary.SinglePhase.Basic.Ground groundR
+          annotation (Placement(transformation(extent={{-40,-50},{-20,-30}})));
+        Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={80,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
+          powerSensor
+          annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
+      equation
+        when terminal() then
+          print("w  ="+String(to_rpm(multiSensor.w), significantDigits=16)+"rpm");
+          print("tau="+String(multiSensor.tau, significantDigits=9)+"Nm");
+          print("pf ="+String(pf, significantDigits=9));
+        end when;
+        connect(terminalBox.plug_sn,ims. plug_sn)
+          annotation (Line(points={{-6,10},{-6,10}},   color={85,170,255}));
+        connect(terminalBox.plug_sp,ims. plug_sp)
+          annotation (Line(points={{6,10},{6,10}},     color={85,170,255}));
+        connect(currentQuasiRMSSensor.plug_n, terminalBox.plugSupply)
+          annotation (Line(points={{0,20},{0,12}},     color={85,170,255}));
+        connect(star.pin_n, ground.pin)
+          annotation (Line(points={{-80,-10},{-80,-20}}, color={85,170,255}));
+        connect(voltageSource.plug_n, star.plug_p)
+          annotation (Line(points={{-80,20},{-80,10}}, color={85,170,255}));
+        connect(ground.pin, terminalBox.starpoint) annotation (Line(points={{-80,-20},
+                {-70,-20},{-70,12},{-9,12}},  color={85,170,255}));
+        connect(torque.flange, multiSensor.flange_b)
+          annotation (Line(points={{50,0},{40,0}}, color={0,0,0}));
+        connect(ims.flange, multiSensor.flange_a)
+          annotation (Line(points={{10,0},{20,0}}, color={0,0,0}));
+        connect(currentQuasiRMSSensor.I, feedback.u2)
+          annotation (Line(points={{10,30},{30,30},{30,52}},  color={0,0,127}));
+        connect(const.y, feedback.u1)
+          annotation (Line(points={{11,60},{22,60}},color={0,0,127}));
+        connect(feedback.y, integralController.u)
+          annotation (Line(points={{39,60},{48,60}}, color={0,0,127}));
+        connect(terminalBox1.plug_sp, ims.plug_rp)
+          annotation (Line(points={{-10,6},{-10,6}}, color={85,170,255}));
+        connect(terminalBox1.plug_sn, ims.plug_rn)
+          annotation (Line(points={{-10,-6},{-10,-6}}, color={85,170,255}));
+        connect(starR.plug_p, terminalBox1.plugSupply)
+          annotation (Line(points={{-30,0},{-12,0}}, color={85,170,255}));
+        connect(starR.pin_n,groundR. pin)
+          annotation (Line(points={{-30,-20},{-30,-30}}, color={85,170,255}));
+        connect(groundR.pin, terminalBox1.starpoint) annotation (Line(points={{-30,-30},
+                {-12,-30},{-12,-9}},          color={85,170,255}));
+        connect(integralController.y, gain.u)
+          annotation (Line(points={{71,60},{80,60},{80,42}}, color={0,0,127}));
+        connect(gain.y, torque.tau)
+          annotation (Line(points={{80,19},{80,0},{72,0}}, color={0,0,127}));
+        connect(voltageSource.plug_p, powerSensor.currentP)
+          annotation (Line(points={{-80,40},{-60,40}}, color={85,170,255}));
+        connect(powerSensor.currentN, currentQuasiRMSSensor.plug_p)
+          annotation (Line(points={{-40,40},{0,40}},   color={85,170,255}));
+        connect(powerSensor.currentP, powerSensor.voltageP)
+          annotation (Line(points={{-60,40},{-60,50},{-50,50}}, color={85,170,255}));
+        connect(voltageSource.plug_n, powerSensor.voltageN)
+          annotation (Line(points={{-80,20},{-50,20},{-50,30}}, color={85,170,255}));
+        annotation (experiment(Interval=0.001, Tolerance=1e-06));
+      end IMS_NominalOperation;
 
-    model SMPM_NominalOperation
-      extends Modelica.Icons.Example;
-      import Modelica.Constants.pi;
-      import Modelica.Utilities.Streams.print;
-      import Modelica.SIunits.Conversions.to_deg;
-      parameter Modelica.SIunits.Torque tau0=
-        smpm.data.m*(smpm.data.VsNominal*smpm.data.IsNominal - smpm.data.Rs*smpm.data.IsNominal^2)/(2*pi*smpm.data.fsNominal/smpm.data.p)
-        "Estimated initial torque";
-      parameter Modelica.SIunits.Angle gammar0=110.7561*pi/180
-        "Estimated initial rotor angle";
-      QuasiStatic.FundamentalWave.SM_PermanentMagnet smpm(gammar(fixed=true, start=
-              gammar0),
-          wMechanical(fixed=true, start=smpm.data.wNominal))
-        annotation (Placement(transformation(extent={{-30,-10},{-10,10}})));
-      Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
-        terminalBox(m=smpm.m, terminalConnection="Y")
-        annotation (Placement(transformation(extent={{-30,6},{-10,26}})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.CurrentQuasiRMSSensor
-        currentQuasiRMSSensor(m=smpm.m) annotation (Placement(transformation(
-            extent={{10,-10},{-10,10}},
-            rotation=90,
-            origin={-20,30})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Sources.VoltageSource
-        voltageSource(
-        m=smpm.m,
-        gamma(fixed=true, start=0),
-        f=smpm.data.fsNominal,
-        V=fill(smpm.data.VsNominal, smpm.m)) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={-80,30})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Basic.Star star(m=smpm.m)
-        annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={-80,0})));
-      Modelica.Electrical.QuasiStationary.SinglePhase.Basic.Ground ground
-        annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
-      Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
-        annotation (Placement(transformation(extent={{0,-10},{20,10}})));
-      Modelica.Mechanics.Rotational.Sources.Torque torque
-        annotation (Placement(transformation(extent={{50,-10},{30,10}})));
-      Modelica.Blocks.Math.Feedback feedback
-        annotation (Placement(transformation(extent={{0,50},{20,70}})));
-      Modelica.Blocks.Sources.Constant const(k=smpm.data.IsNominal)
-        annotation (Placement(transformation(extent={{-30,50},{-10,70}})));
-      Modelica.Blocks.Continuous.Integrator integrator(
-        k=1000,                                                initType=Modelica.Blocks.Types.Init.InitialOutput,
-        y_start=tau0)
-        annotation (Placement(transformation(extent={{30,50},{50,70}})));
-      Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={60,30})));
-      Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
-        powerSensor
-        annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
-    equation
-      when terminal() then
-        print("gammar="+String(to_deg(smpm.gammar), significantDigits=16)+"deg");
-        print("tau   ="+String(multiSensor.tau, significantDigits=9)+"Nm");
-        print("pf    ="+String(powerSensor.y.re/powerSensor.abs_y, significantDigits=9));
-      end when;
-      connect(terminalBox.plug_sn, smpm.plug_sn)
-        annotation (Line(points={{-26,10},{-26,10}}, color={85,170,255}));
-      connect(terminalBox.plug_sp, smpm.plug_sp)
-        annotation (Line(points={{-14,10},{-14,10}}, color={85,170,255}));
-      connect(currentQuasiRMSSensor.plug_n, terminalBox.plugSupply)
-        annotation (Line(points={{-20,20},{-20,12}}, color={85,170,255}));
-      connect(ground.pin, terminalBox.starpoint) annotation (Line(points={{-80,-20},
-              {-70,-20},{-70,12},{-29,12}}, color={85,170,255}));
-      connect(torque.flange, multiSensor.flange_b)
-        annotation (Line(points={{30,0},{20,0}}, color={0,0,0}));
-      connect(smpm.flange, multiSensor.flange_a)
-        annotation (Line(points={{-10,0},{0,0}}, color={0,0,0}));
-      connect(currentQuasiRMSSensor.I, feedback.u2)
-        annotation (Line(points={{-10,30},{10,30},{10,52}}, color={0,0,127}));
-      connect(const.y, feedback.u1)
-        annotation (Line(points={{-9,60},{2,60}}, color={0,0,127}));
-      connect(feedback.y, integrator.u)
-        annotation (Line(points={{19,60},{28,60}}, color={0,0,127}));
-      connect(star.pin_n, ground.pin)
-        annotation (Line(points={{-80,-10},{-80,-20}}, color={85,170,255}));
-      connect(voltageSource.plug_n, star.plug_p)
-        annotation (Line(points={{-80,20},{-80,10}}, color={85,170,255}));
-      connect(integrator.y, gain.u)
-        annotation (Line(points={{51,60},{60,60},{60,42}}, color={0,0,127}));
-      connect(gain.y, torque.tau)
-        annotation (Line(points={{60,19},{60,0},{52,0}}, color={0,0,127}));
-      connect(voltageSource.plug_p, powerSensor.currentP)
-        annotation (Line(points={{-80,40},{-60,40}}, color={85,170,255}));
-      connect(powerSensor.currentN, currentQuasiRMSSensor.plug_p)
-        annotation (Line(points={{-40,40},{-20,40}}, color={85,170,255}));
-      connect(powerSensor.currentP, powerSensor.voltageP)
-        annotation (Line(points={{-60,40},{-60,50},{-50,50}}, color={85,170,255}));
-      connect(voltageSource.plug_n, powerSensor.voltageN)
-        annotation (Line(points={{-80,20},{-50,20},{-50,30}}, color={85,170,255}));
-      annotation (experiment(Interval=0.001, Tolerance=1e-06));
-    end SMPM_NominalOperation;
+      model SMPM_NominalOperation
+        extends Modelica.Icons.Example;
+        import Modelica.Constants.pi;
+        import Modelica.Utilities.Streams.print;
+        import Modelica.SIunits.Conversions.to_deg;
+        parameter Modelica.SIunits.Torque tau0=181.4447 "Estimated initial torque";
+        parameter Modelica.SIunits.Angle gammar0=110.7561*pi/180
+          "Estimated initial rotor angle";
+        Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
+        .ElectricalMachines.QuasiStatic.FundamentalWave.SM_PermanentMagnet smpm(gammar(
+              fixed=true, start=gammar0), wMechanical(fixed=true, start=smpm.data.wNominal))
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
+        Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
+          terminalBox(m=smpm.m, terminalConnection="Y")
+          annotation (Placement(transformation(extent={{-10,6},{10,26}})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.CurrentQuasiRMSSensor
+          currentQuasiRMSSensor(m=smpm.m) annotation (Placement(transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=90,
+              origin={0,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sources.VoltageSource
+          voltageSource(
+          m=smpm.m,
+          gamma(fixed=true, start=0),
+          f=smpm.data.fsNominal,
+          V=fill(smpm.data.VsNominal, smpm.m)) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Basic.Star star(m=smpm.m)
+          annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,0})));
+        Modelica.Electrical.QuasiStationary.SinglePhase.Basic.Ground ground
+          annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
+        Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
+          annotation (Placement(transformation(extent={{20,-10},{40,10}})));
+        Modelica.Mechanics.Rotational.Sources.Torque torque
+          annotation (Placement(transformation(extent={{70,-10},{50,10}})));
+        Modelica.Blocks.Math.Feedback feedback
+          annotation (Placement(transformation(extent={{20,50},{40,70}})));
+        Modelica.Blocks.Sources.Constant const(k=smpm.data.IsNominal)
+          annotation (Placement(transformation(extent={{-10,50},{10,70}})));
+        Modelica.Blocks.Continuous.Integrator integralController(
+          k=1000,
+          initType=Modelica.Blocks.Types.Init.InitialOutput,
+          y_start=tau0)
+          annotation (Placement(transformation(extent={{50,50},{70,70}})));
+        Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={80,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
+          powerSensor
+          annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
+      equation
+        when terminal() then
+          print("gammar="+String(to_deg(smpm.gammar), significantDigits=16)+"deg");
+          print("tau   ="+String(multiSensor.tau, significantDigits=9)+"Nm");
+          print("pf    ="+String(pf, significantDigits=9));
+        end when;
+        connect(terminalBox.plug_sn, smpm.plug_sn)
+          annotation (Line(points={{-6,10},{-6,10}},   color={85,170,255}));
+        connect(terminalBox.plug_sp, smpm.plug_sp)
+          annotation (Line(points={{6,10},{6,10}},     color={85,170,255}));
+        connect(currentQuasiRMSSensor.plug_n, terminalBox.plugSupply)
+          annotation (Line(points={{0,20},{0,12}},     color={85,170,255}));
+        connect(ground.pin, terminalBox.starpoint) annotation (Line(points={{-80,-20},
+                {-70,-20},{-70,12},{-9,12}},  color={85,170,255}));
+        connect(torque.flange, multiSensor.flange_b)
+          annotation (Line(points={{50,0},{40,0}}, color={0,0,0}));
+        connect(smpm.flange, multiSensor.flange_a)
+          annotation (Line(points={{10,0},{20,0}}, color={0,0,0}));
+        connect(currentQuasiRMSSensor.I, feedback.u2)
+          annotation (Line(points={{10,30},{30,30},{30,52}},  color={0,0,127}));
+        connect(const.y, feedback.u1)
+          annotation (Line(points={{11,60},{22,60}},color={0,0,127}));
+        connect(feedback.y, integralController.u)
+          annotation (Line(points={{39,60},{48,60}}, color={0,0,127}));
+        connect(star.pin_n, ground.pin)
+          annotation (Line(points={{-80,-10},{-80,-20}}, color={85,170,255}));
+        connect(voltageSource.plug_n, star.plug_p)
+          annotation (Line(points={{-80,20},{-80,10}}, color={85,170,255}));
+        connect(integralController.y, gain.u)
+          annotation (Line(points={{71,60},{80,60},{80,42}}, color={0,0,127}));
+        connect(gain.y, torque.tau)
+          annotation (Line(points={{80,19},{80,0},{72,0}}, color={0,0,127}));
+        connect(voltageSource.plug_p, powerSensor.currentP)
+          annotation (Line(points={{-80,40},{-60,40}}, color={85,170,255}));
+        connect(powerSensor.currentN, currentQuasiRMSSensor.plug_p)
+          annotation (Line(points={{-40,40},{0,40}},   color={85,170,255}));
+        connect(powerSensor.currentP, powerSensor.voltageP)
+          annotation (Line(points={{-60,40},{-60,50},{-50,50}}, color={85,170,255}));
+        connect(voltageSource.plug_n, powerSensor.voltageN)
+          annotation (Line(points={{-80,20},{-50,20},{-50,30}}, color={85,170,255}));
+        annotation (experiment(Interval=0.001, Tolerance=1e-06));
+      end SMPM_NominalOperation;
+
+      model SMEE_NominalOperation
+        extends Modelica.Icons.Example;
+        import Modelica.Constants.pi;
+        import Modelica.Utilities.Streams.print;
+        import Modelica.SIunits.Conversions.to_deg;
+        parameter Modelica.SIunits.Torque tau0=185.2564 "Estimated initial torque";
+        parameter Modelica.SIunits.Angle gammar0=148.7736*pi/180
+          "Estimated initial rotor angle";
+        parameter Modelica.SIunits.Current Ie0=18.7107 "Estimated initial excitation current";
+        Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
+        .ElectricalMachines.QuasiStatic.FundamentalWave.SM_ElectricalExcited smee(gammar(
+              fixed=true, start=gammar0), wMechanical(fixed=true, start=smee.data.wNominal))
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
+        Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
+          terminalBox(m=smee.m, terminalConnection="Y")
+          annotation (Placement(transformation(extent={{-10,6},{10,26}})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.CurrentQuasiRMSSensor
+          currentQuasiRMSSensor(m=smee.m) annotation (Placement(transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=90,
+              origin={0,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sources.VoltageSource
+          voltageSource(
+          m=smee.m,
+          gamma(fixed=true, start=0),
+          f=smee.data.fsNominal,
+          V=fill(smee.data.VsNominal, smee.m)) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Basic.Star star(m=smee.m)
+          annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,0})));
+        Modelica.Electrical.QuasiStationary.SinglePhase.Basic.Ground ground
+          annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
+        Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
+          annotation (Placement(transformation(extent={{20,-10},{40,10}})));
+        Modelica.Mechanics.Rotational.Sources.Torque torque
+          annotation (Placement(transformation(extent={{70,-10},{50,10}})));
+        Modelica.Blocks.Math.Feedback feedback
+          annotation (Placement(transformation(extent={{20,50},{40,70}})));
+        Modelica.Blocks.Sources.Constant const(k=smee.data.IsNominal)
+          annotation (Placement(transformation(extent={{-10,50},{10,70}})));
+        Modelica.Blocks.Continuous.Integrator integralController(
+          k=1000,
+          initType=Modelica.Blocks.Types.Init.InitialOutput,
+          y_start=tau0)
+          annotation (Placement(transformation(extent={{50,50},{70,70}})));
+        Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={80,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
+          powerSensor
+          annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
+        Modelica.Electrical.Analog.Basic.Ground groundE
+          annotation (Placement(transformation(extent={{-40,-50},{-20,-30}})));
+        Modelica.Electrical.Analog.Sources.ConstantCurrent excitationCurrent(I=Ie0)
+          annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={-30,-10})));
+      equation
+        when terminal() then
+          print("gammar=" + String(to_deg(smee.gammar), significantDigits=16) + "deg");
+          print("tau   ="+String(multiSensor.tau, significantDigits=9)+"Nm");
+          print("pf    ="+String(pf, significantDigits=9));
+        end when;
+        connect(terminalBox.plug_sn, smee.plug_sn)
+          annotation (Line(points={{-6,10},{-6,10}},   color={85,170,255}));
+        connect(terminalBox.plug_sp, smee.plug_sp)
+          annotation (Line(points={{6,10},{6,10}},     color={85,170,255}));
+        connect(currentQuasiRMSSensor.plug_n, terminalBox.plugSupply)
+          annotation (Line(points={{0,20},{0,12}},     color={85,170,255}));
+        connect(ground.pin, terminalBox.starpoint) annotation (Line(points={{-80,-20},
+                {-70,-20},{-70,12},{-9,12}},  color={85,170,255}));
+        connect(torque.flange, multiSensor.flange_b)
+          annotation (Line(points={{50,0},{40,0}}, color={0,0,0}));
+        connect(smee.flange, multiSensor.flange_a)
+          annotation (Line(points={{10,0},{20,0}}, color={0,0,0}));
+        connect(currentQuasiRMSSensor.I, feedback.u2)
+          annotation (Line(points={{10,30},{30,30},{30,52}},  color={0,0,127}));
+        connect(const.y, feedback.u1)
+          annotation (Line(points={{11,60},{22,60}},color={0,0,127}));
+        connect(feedback.y, integralController.u)
+          annotation (Line(points={{39,60},{48,60}}, color={0,0,127}));
+        connect(star.pin_n, ground.pin)
+          annotation (Line(points={{-80,-10},{-80,-20}}, color={85,170,255}));
+        connect(voltageSource.plug_n, star.plug_p)
+          annotation (Line(points={{-80,20},{-80,10}}, color={85,170,255}));
+        connect(integralController.y, gain.u)
+          annotation (Line(points={{71,60},{80,60},{80,42}}, color={0,0,127}));
+        connect(gain.y, torque.tau)
+          annotation (Line(points={{80,19},{80,0},{72,0}}, color={0,0,127}));
+        connect(voltageSource.plug_p, powerSensor.currentP)
+          annotation (Line(points={{-80,40},{-60,40}}, color={85,170,255}));
+        connect(powerSensor.currentN, currentQuasiRMSSensor.plug_p)
+          annotation (Line(points={{-40,40},{0,40}},   color={85,170,255}));
+        connect(powerSensor.currentP, powerSensor.voltageP)
+          annotation (Line(points={{-60,40},{-60,50},{-50,50}}, color={85,170,255}));
+        connect(voltageSource.plug_n, powerSensor.voltageN)
+          annotation (Line(points={{-80,20},{-50,20},{-50,30}}, color={85,170,255}));
+        connect(excitationCurrent.n, smee.pin_ep)
+          annotation (Line(points={{-30,0},{-30,6},{-10,6}}, color={0,0,255}));
+        connect(excitationCurrent.p, smee.pin_en) annotation (Line(points={{-30,
+                -20},{-10,-20},{-10,-6}}, color={0,0,255}));
+        connect(groundE.p, excitationCurrent.p) annotation (Line(points={{-30,
+                -30},{-30,-20},{-30,-20}}, color={0,0,255}));
+        annotation (experiment(Interval=0.001, Tolerance=1e-06));
+      end SMEE_NominalOperation;
+
+      model SMR_NominalOperation
+        extends Modelica.Icons.Example;
+        import Modelica.Constants.pi;
+        import Modelica.Utilities.Streams.print;
+        import Modelica.SIunits.Conversions.to_deg;
+        parameter Modelica.SIunits.Torque tau0=46.0435 "Estimated initial torque";
+        parameter Modelica.SIunits.Angle gammar0=112.8615*pi/180
+          "Estimated initial rotor angle";
+        Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
+        .ElectricalMachines.QuasiStatic.FundamentalWave.SM_ReluctanceRotor smr(gammar(
+              fixed=true, start=gammar0), wMechanical(fixed=true, start=smr.data.wNominal))
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
+        Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
+          terminalBox(m=smr.m, terminalConnection="Y")
+          annotation (Placement(transformation(extent={{-10,6},{10,26}})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.CurrentQuasiRMSSensor
+          currentQuasiRMSSensor(m=smr.m) annotation (Placement(transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=90,
+              origin={0,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sources.VoltageSource
+          voltageSource(
+          m=smr.m,
+          gamma(fixed=true, start=0),
+          f=smr.data.fsNominal,
+          V=fill(smr.data.VsNominal, smr.m)) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Basic.Star star(m=smr.m)
+          annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-80,0})));
+        Modelica.Electrical.QuasiStationary.SinglePhase.Basic.Ground ground
+          annotation (Placement(transformation(extent={{-90,-40},{-70,-20}})));
+        Modelica.Mechanics.Rotational.Sensors.MultiSensor multiSensor
+          annotation (Placement(transformation(extent={{20,-10},{40,10}})));
+        Modelica.Mechanics.Rotational.Sources.Torque torque
+          annotation (Placement(transformation(extent={{70,-10},{50,10}})));
+        Modelica.Blocks.Math.Feedback feedback
+          annotation (Placement(transformation(extent={{20,50},{40,70}})));
+        Modelica.Blocks.Sources.Constant const(k=smr.data.IsNominal)
+          annotation (Placement(transformation(extent={{-10,50},{10,70}})));
+        Modelica.Blocks.Continuous.Integrator integralController(
+          k=1000,
+          initType=Modelica.Blocks.Types.Init.InitialOutput,
+          y_start=tau0)
+          annotation (Placement(transformation(extent={{50,50},{70,70}})));
+        Modelica.Blocks.Math.Gain gain(k=-1) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={80,30})));
+        Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
+          powerSensor
+          annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
+      equation
+        when terminal() then
+          print("gammar=" + String(to_deg(smr.gammar), significantDigits=16) + "deg");
+          print("tau   ="+String(multiSensor.tau, significantDigits=9)+"Nm");
+          print("pf    ="+String(pf, significantDigits=9));
+        end when;
+        connect(terminalBox.plug_sn, smr.plug_sn)
+          annotation (Line(points={{-6,10},{-6,10}},   color={85,170,255}));
+        connect(terminalBox.plug_sp, smr.plug_sp)
+          annotation (Line(points={{6,10},{6,10}},     color={85,170,255}));
+        connect(currentQuasiRMSSensor.plug_n, terminalBox.plugSupply)
+          annotation (Line(points={{0,20},{0,12}},     color={85,170,255}));
+        connect(ground.pin, terminalBox.starpoint) annotation (Line(points={{-80,-20},
+                {-70,-20},{-70,12},{-9,12}},  color={85,170,255}));
+        connect(torque.flange, multiSensor.flange_b)
+          annotation (Line(points={{50,0},{40,0}}, color={0,0,0}));
+        connect(smr.flange, multiSensor.flange_a)
+          annotation (Line(points={{10,0},{20,0}}, color={0,0,0}));
+        connect(currentQuasiRMSSensor.I, feedback.u2)
+          annotation (Line(points={{10,30},{30,30},{30,52}},  color={0,0,127}));
+        connect(const.y, feedback.u1)
+          annotation (Line(points={{11,60},{22,60}},color={0,0,127}));
+        connect(feedback.y, integralController.u)
+          annotation (Line(points={{39,60},{48,60}}, color={0,0,127}));
+        connect(star.pin_n, ground.pin)
+          annotation (Line(points={{-80,-10},{-80,-20}}, color={85,170,255}));
+        connect(voltageSource.plug_n, star.plug_p)
+          annotation (Line(points={{-80,20},{-80,10}}, color={85,170,255}));
+        connect(integralController.y, gain.u)
+          annotation (Line(points={{71,60},{80,60},{80,42}}, color={0,0,127}));
+        connect(gain.y, torque.tau)
+          annotation (Line(points={{80,19},{80,0},{72,0}}, color={0,0,127}));
+        connect(voltageSource.plug_p, powerSensor.currentP)
+          annotation (Line(points={{-80,40},{-60,40}}, color={85,170,255}));
+        connect(powerSensor.currentN, currentQuasiRMSSensor.plug_p)
+          annotation (Line(points={{-40,40},{0,40}},   color={85,170,255}));
+        connect(powerSensor.currentP, powerSensor.voltageP)
+          annotation (Line(points={{-60,40},{-60,50},{-50,50}}, color={85,170,255}));
+        connect(voltageSource.plug_n, powerSensor.voltageN)
+          annotation (Line(points={{-80,20},{-50,20},{-50,30}}, color={85,170,255}));
+        annotation (experiment(Interval=0.001, Tolerance=1e-06));
+      end SMR_NominalOperation;
+    end QuasiStatic;
+
   end Examples;
 
   package Transient "Transient Machine Models"
@@ -1326,6 +1557,8 @@ package ElectricalMachines "Electrical machine models with Parameter records"
       extends InductionMachineData(machine="imc",
         wNominal=1440.4552325875*2*pi/60);
       import Modelica.Constants.pi;
+      parameter Real s=1 - wNominal/(2*pi*fsNominal/p) "Nominal slip"
+        annotation (Dialog(tab="Nominal parameters", enable=false));
       parameter Modelica.SIunits.Inductance Lm=3*sqrt(1 - 0.0667)/(2*pi*fsNominal)
         "Stator main field inductance per phase"
         annotation (Dialog(tab="Nominal resistances and inductances"));
@@ -1354,6 +1587,8 @@ package ElectricalMachines "Electrical machine models with Parameter records"
       extends InductionMachineData(machine="ims",
         wNominal=1440.4552325875*2*pi/60);
       import Modelica.Constants.pi;
+      parameter Real s=1 - wNominal/(2*pi*fsNominal/p) "Nominal slip"
+        annotation (Dialog(tab="Nominal parameters", enable=false));
       parameter Modelica.SIunits.Inductance Lm=3*sqrt(1 - 0.0667)/(2*pi*fsNominal)
         "Stator main field inductance per phase"
         annotation (Dialog(tab="Nominal resistances and inductances"));
@@ -1382,7 +1617,6 @@ package ElectricalMachines "Electrical machine models with Parameter records"
         (2*pi*fsNominal*Lm)/sqrt(Rs^2 + (2*pi*fsNominal*(Lm + Lssigma))^2)
         "Locked-rotor voltage per phase"
         annotation (Dialog(enable=not useTurnsRatio));
-      final parameter Real s=1 - wNominal/(2*pi*fsNominal/p) "Nominal slip";
       parameter Modelica.Electrical.Machines.Losses.CoreParameters rotorCoreParameters(
         final m=3,
         PRef=0,
@@ -1400,7 +1634,7 @@ package ElectricalMachines "Electrical machine models with Parameter records"
 
     record SM_PermanentMagnetData "Parameters for synchronous machines with permanent magnets"
       extends SM_ReluctanceRotorData(machine="smpm",
-        final wNominal=2*pi*fsNominal/p,
+        IsNominal=100,
         Lmd=0.3/(2*pi*fsNominal), Lmq=0.3/(2*pi*fsNominal));
       import Modelica.Constants.pi;
       parameter Modelica.SIunits.Voltage VsOpenCircuit=112.3
@@ -1421,6 +1655,7 @@ package ElectricalMachines "Electrical machine models with Parameter records"
 
     record SM_ElectricalExcitedData "Parameters for synchronous machines with electrical excitation"
       extends SM_ReluctanceRotorData(machine="smee",
+        IsNominal=100,
         Lmd=1.5/(2*pi*fsNominal), Lmq=1.5/(2*pi*fsNominal));
       import Modelica.Constants.pi;
       parameter Modelica.SIunits.Current IeOpenCircuit=10
@@ -1438,6 +1673,12 @@ package ElectricalMachines "Electrical machine models with Parameter records"
         min=0,
         max=0.99) = 0.025 "Stray fraction of total excitation inductance"
         annotation (Dialog(tab="Excitation"));
+      parameter Real turnsRatio=sqrt(2)*VsNominal/(2*pi*fsNominal*Lmd*IeOpenCircuit)
+        "Stator current / excitation current"
+        annotation (Dialog(tab="Excitation", enable=false));
+      parameter Modelica.SIunits.Inductance Le=Lmd*turnsRatio^2*3/2/(1 - sigmae)
+        "Excitation inductance"
+        annotation (Dialog(tab="Excitation", enable=false));
       parameter Modelica.Electrical.Machines.Losses.BrushParameters brushParameters(V=0,
           ILinear=0.01) "Brush loss parameter record"
         annotation (Dialog(tab="Losses"));
@@ -1451,6 +1692,8 @@ package ElectricalMachines "Electrical machine models with Parameter records"
 
     record SM_ReluctanceRotorData "Parameters for synchronous machines with reluctance rotor"
       extends InductionMachineData(machine="smr",
+        final wNominal=2*pi*fsNominal/p,
+        IsNominal=50,
         Lssigma=0.1/(2*pi*fsNominal));
       import Modelica.Constants.pi;
       parameter Modelica.SIunits.Inductance Lmd=2.9/(2*pi*fsNominal)
@@ -1518,7 +1761,7 @@ package ElectricalMachines "Electrical machine models with Parameter records"
       parameter Modelica.SIunits.AngularVelocity wNominal(displayUnit="rev/min")=
            1425*2*pi/60 "Nominal speed"
         annotation (Dialog(tab="Nominal parameters"));
-      parameter Modelica.SIunits.Temperature TaNominal=293.15
+      parameter Modelica.SIunits.Temperature TaNominal=TaRef
         "Nominal armature temperature"
         annotation (Dialog(tab="Nominal parameters"));
       parameter Modelica.SIunits.Resistance Ra=0.05
@@ -1591,6 +1834,9 @@ package ElectricalMachines "Electrical machine models with Parameter records"
         min=0,
         max=0.99) = 0 "Stray fraction of total excitation inductance"
         annotation (Dialog(tab="Excitation"));
+      parameter Modelica.SIunits.Temperature TeNominal=TeRef
+        "Nominal excitation temperature"
+        annotation (Dialog(tab="Nominal parameters"));
       annotation (
         defaultComponentName="dceeData",
         defaultComponentPrefixes="parameter",
@@ -1624,7 +1870,7 @@ package ElectricalMachines "Electrical machine models with Parameter records"
         min=0,
         max=0.99) = 0 "Stray fraction of total excitation inductance"
         annotation (Dialog(tab="Excitation"));
-      parameter Modelica.SIunits.Temperature TeNominal=293.15
+      parameter Modelica.SIunits.Temperature TeNominal=TeRef
         "Nominal series excitation temperature"
         annotation (Dialog(tab="Nominal parameters"));
       annotation (
@@ -1686,7 +1932,8 @@ package ElectricalMachines "Electrical machine models with Parameter records"
 </html>"));
     end TransformerData;
   end ParameterRecords;
-  annotation (uses(Modelica(version="3.2.2")), Icon(graphics={
+  annotation (version="0.9.0", versionDate="2018-12-27", uses(Modelica(version="3.2.2")),
+    Icon(graphics={
         Rectangle(
           origin={2.835,10},
           fillColor={0,128,255},
