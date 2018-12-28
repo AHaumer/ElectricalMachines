@@ -4,8 +4,8 @@ model IM_SlipRing
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Magnetic.QuasiStatic.FundamentalWave.BasicMachines.InductionMachines.IM_SlipRing(
-    TsOperational=data.TsRef,
-    TrOperational=data.TrRef,
+    TsOperational=data.TsNominal,
+    TrOperational=data.TrNominal,
     final m=data.m,
     final mr=data.mr,
     final p=data.p,

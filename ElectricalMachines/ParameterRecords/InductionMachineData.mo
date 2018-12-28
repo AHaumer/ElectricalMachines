@@ -20,6 +20,12 @@ record InductionMachineData "Common parameters for induction machines"
   parameter Modelica.SIunits.AngularVelocity wNominal(displayUnit="rev/min")=2*pi*fsNominal/p
     "Nominal speed"
     annotation (Dialog(tab="Nominal parameters"));
+  parameter Modelica.SIunits.Torque tauNominal
+    "Nominal torque"
+    annotation (Dialog(tab="Nominal parameters"));
+  parameter Modelica.SIunits.Temperature TsNominal=TsRef
+    "Nominal stator temperature"
+    annotation (Dialog(tab="Nominal parameters"));
   //resistances and inductances
   parameter Modelica.SIunits.Resistance Rs=0.03
     "Stator resistance per phase at TRef"

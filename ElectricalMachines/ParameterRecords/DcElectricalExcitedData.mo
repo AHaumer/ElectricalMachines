@@ -1,6 +1,7 @@
 within ElectricalMachines.ParameterRecords;
 record DcElectricalExcitedData "Parameters for DC machines with electrical excitation"
-  extends DcPermanentMagnetData(machine="dcee");
+  extends DcPermanentMagnetData(machine="dcee",
+    tauNominal=63.6619772);
   //nominal parameter(s)
   parameter Modelica.SIunits.Temperature TeNominal=TeRef
     "Nominal excitation temperature"

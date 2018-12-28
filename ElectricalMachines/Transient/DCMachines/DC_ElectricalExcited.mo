@@ -3,8 +3,8 @@ model DC_ElectricalExcited
   parameter ElectricalMachines.ParameterRecords.DcElectricalExcitedData data annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Electrical.Machines.BasicMachines.DCMachines.DC_ElectricalExcited(
-    TaOperational=data.TaRef,
-    TeOperational=data.TeRef,
+    TaOperational=data.TaNominal,
+    TeOperational=data.TeNominal,
     final Jr=data.Jr,
     final Js=data.Js,
     final VaNominal=data.VaNominal,

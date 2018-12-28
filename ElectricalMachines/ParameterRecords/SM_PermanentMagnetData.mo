@@ -2,11 +2,17 @@ within ElectricalMachines.ParameterRecords;
 record SM_PermanentMagnetData "Parameters for synchronous machines with permanent magnets"
   extends SM_ReluctanceRotorData(machine="smpm",
     IsNominal=100,
+    tauNominal=181.4447,
+    gammaNominal=20.756097*pi/180,
     Lmd=0.3/(2*pi*fsNominal), Lmq=0.3/(2*pi*fsNominal));
   import Modelica.Constants.pi;
   //common parameter(s)
   parameter Modelica.SIunits.Voltage VsOpenCircuit=112.3
     "Open circuit RMS voltage per phase @ fsNominal";
+  //nominal parameter(s)
+  parameter Modelica.SIunits.Temperature TrNominal=TrRef
+    "Nominal rotor temperature"
+    annotation (Dialog(tab="Nominal parameters", enable=useDamperCage));
   //losses
   parameter
     Modelica.Electrical.Machines.Losses.PermanentMagnetLossParameters permanentMagnetLossParameters(

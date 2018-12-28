@@ -3,7 +3,7 @@ model DC_PermanentMagnet
   parameter ElectricalMachines.ParameterRecords.DcPermanentMagnetData data annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Electrical.Machines.BasicMachines.DCMachines.DC_PermanentMagnet(
-    TaOperational=data.TaRef,
+    TaOperational=data.TaNominal,
     final Jr=data.Jr,
     final Js=data.Js,
     final VaNominal=data.VaNominal,

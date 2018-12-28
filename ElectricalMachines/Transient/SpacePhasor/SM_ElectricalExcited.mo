@@ -4,9 +4,9 @@ model SM_ElectricalExcited
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Electrical.Machines.BasicMachines.SynchronousInductionMachines.SM_ElectricalExcited(
-    TsOperational=data.TsRef,
-    TrOperational=data.TrRef,
-    TeOperational=data.TeRef,
+    TsOperational=data.TsNominal,
+    TrOperational=data.TrNominal,
+    TeOperational=data.TeNominal,
     final p=data.p,
     final fsNominal=data.fsNominal,
     final Jr=data.Jr,

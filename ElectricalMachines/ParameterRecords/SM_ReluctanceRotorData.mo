@@ -2,9 +2,17 @@ within ElectricalMachines.ParameterRecords;
 record SM_ReluctanceRotorData "Parameters for synchronous machines with reluctance rotor"
   extends InductionMachineData(machine="smr",
     final wNominal=2*pi*fsNominal/p,
+    tauNominal=46.0435355,
     IsNominal=50,
     Lssigma=0.1/(2*pi*fsNominal));
   import Modelica.Constants.pi;
+  //nominal parameter(s)
+  parameter Modelica.SIunits.Temperature TrNominal=TrRef
+    "Nominal rotor temperature"
+    annotation (Dialog(tab="Nominal parameters", enable=useDamperCage));
+  parameter Modelica.SIunits.Angle gammaNominal=22.861535*pi/180
+    "Nominal rotor angle"
+    annotation (Dialog(tab="Nominal parameters"));
   //resistances and inductances
   parameter Modelica.SIunits.Inductance Lmd=2.9/(2*pi*fsNominal)
     "Stator main field inductance per phase in d-axis"

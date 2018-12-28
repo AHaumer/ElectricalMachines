@@ -1,7 +1,8 @@
 within ElectricalMachines.ParameterRecords;
 record IM_SlipRingData "Parameters for induction machines with slip ring rotor"
   extends InductionMachineData(machine="ims",
-    wNominal=1440.4552325875*2*pi/60);
+    wNominal=1440.4552325875*2*pi/60,
+    tauNominal=161.401185);
   import Modelica.Constants.pi;
   //common parameters
   parameter Integer mr(final min=2)=3 "Number of rotor phases (m=3 for SpacePhasor machines)";
@@ -16,6 +17,9 @@ record IM_SlipRingData "Parameters for induction machines with slip ring rotor"
     "Locked-rotor voltage per phase"
     annotation (Dialog(enable=not useTurnsRatio));
   //nominal parameter(s)
+  parameter Modelica.SIunits.Temperature TrNominal=TrRef
+    "Nominal rotor temperature"
+    annotation (Dialog(tab="Nominal parameters"));
   parameter Real s=1 - wNominal/(2*pi*fsNominal/p) "Nominal slip"
     annotation (Dialog(tab="Nominal parameters", enable=false));
   //resistances and inductances

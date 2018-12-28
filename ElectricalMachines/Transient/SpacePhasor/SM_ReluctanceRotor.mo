@@ -4,8 +4,8 @@ model SM_ReluctanceRotor
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Electrical.Machines.BasicMachines.SynchronousInductionMachines.SM_ReluctanceRotor(
-    TsOperational=data.TsRef,
-    TrOperational=data.TrRef,
+    TsOperational=data.TsNominal,
+    TrOperational=data.TrNominal,
     final p=data.p,
     final fsNominal=data.fsNominal,
     final Jr=data.Jr,

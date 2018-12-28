@@ -4,8 +4,8 @@ model IM_SquirrelCage
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Magnetic.QuasiStatic.FundamentalWave.BasicMachines.InductionMachines.IM_SquirrelCage(
-    TsOperational=data.TsRef,
-    TrOperational=data.TrRef,
+    TsOperational=data.TsNominal,
+    TrOperational=data.TrNominal,
     final m=data.m,
     final p=data.p,
     final fsNominal=data.fsNominal,

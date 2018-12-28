@@ -4,7 +4,7 @@ package ElectricalMachines "Electrical machine models with Parameter records"
 
 
 
-  annotation (version="0.9.0", versionDate="2018-12-27", uses(Modelica(version="3.2.2")),
+  annotation (version="0.9.0", versionDate="2018-12-28", uses(Modelica(version="3.2.2")),
     Icon(graphics={
         Rectangle(
           origin={2.835,10},

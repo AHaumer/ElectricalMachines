@@ -1,9 +1,13 @@
 within ElectricalMachines.ParameterRecords;
 record IM_SquirrelCageData "Parameters for induction machines with squirrel cage"
   extends InductionMachineData(machine="imc",
-    wNominal=1440.4552325875*2*pi/60);
+    wNominal=1440.4552325875*2*pi/60,
+    tauNominal=161.401185);
   import Modelica.Constants.pi;
   //nominal parameter(s)
+  parameter Modelica.SIunits.Temperature TrNominal=TrRef
+    "Nominal rotor temperature"
+    annotation (Dialog(tab="Nominal parameters"));
   parameter Real s=1 - wNominal/(2*pi*fsNominal/p) "Nominal slip"
     annotation (Dialog(tab="Nominal parameters", enable=false));
   //resistances and inductances

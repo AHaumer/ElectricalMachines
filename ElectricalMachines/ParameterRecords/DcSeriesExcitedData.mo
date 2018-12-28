@@ -2,6 +2,7 @@ within ElectricalMachines.ParameterRecords;
 record DcSeriesExcitedData "Parameters for DC machines with series excitation"
   extends DcPermanentMagnetData(machine="dcse",
     wNominal=1410*2*pi/60,
+    tauNominal=63.6619772,
     ViNominal=VaNominal -
       (Modelica.Electrical.Machines.Thermal.convertResistance(Ra, TaRef, alpha20a, TaNominal) +
        Modelica.Electrical.Machines.Thermal.convertResistance(Re, TeRef, alpha20e, TeNominal))*IaNominal -

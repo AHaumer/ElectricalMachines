@@ -16,12 +16,16 @@ record DcPermanentMagnetData "Parameters for DC machines with permanent magnet e
   parameter Modelica.SIunits.AngularVelocity wNominal(displayUnit="rev/min")=
        1425*2*pi/60 "Nominal speed"
     annotation (Dialog(tab="Nominal parameters"));
-  parameter Modelica.SIunits.Temperature TaNominal=TaRef
-    "Nominal armature temperature"
+  parameter Modelica.SIunits.Torque tauNominal=63.6619772
+    "Nominal torque"
     annotation (Dialog(tab="Nominal parameters"));
   parameter Modelica.SIunits.Voltage ViNominal=VaNominal -
       Modelica.Electrical.Machines.Thermal.convertResistance(Ra, TaRef, alpha20a, TaNominal)*IaNominal -
       Modelica.Electrical.Machines.Losses.DCMachines.brushVoltageDrop(brushParameters, IaNominal)
+    "Nominal induced voltage"
+    annotation (Dialog(tab="Nominal parameters"));
+  parameter Modelica.SIunits.Temperature TaNominal=TaRef
+    "Nominal armature temperature"
     annotation (Dialog(tab="Nominal parameters"));
   //resistances and inductances
   parameter Modelica.SIunits.Resistance Ra=0.05

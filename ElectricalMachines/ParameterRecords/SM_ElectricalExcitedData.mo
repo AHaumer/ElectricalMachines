@@ -2,8 +2,17 @@ within ElectricalMachines.ParameterRecords;
 record SM_ElectricalExcitedData "Parameters for synchronous machines with electrical excitation"
   extends SM_ReluctanceRotorData(machine="smee",
     IsNominal=100,
+    tauNominal=185.256354,
+    gammaNominal=58.773623*pi/180,
     Lmd=1.5/(2*pi*fsNominal), Lmq=1.5/(2*pi*fsNominal));
   import Modelica.Constants.pi;
+  //nominal parameter(s)
+  parameter Modelica.SIunits.Current IeNominal=18.7107
+    "Nominal excitation current"
+    annotation (Dialog(tab="Nominal parameters"));
+  parameter Modelica.SIunits.Temperature TeNominal=TeRef
+    "Nominal excitation temperature"
+    annotation (Dialog(tab="Nominal parameters"));
   //excitation
   parameter Modelica.SIunits.Current IeOpenCircuit=10
     "Open circuit excitation current @ nominal voltage and frequency"
