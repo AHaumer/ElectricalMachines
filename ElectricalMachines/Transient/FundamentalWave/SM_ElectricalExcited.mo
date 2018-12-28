@@ -1,6 +1,6 @@
 within ElectricalMachines.Transient.FundamentalWave;
 model SM_ElectricalExcited "Transient synchronous machine with electrical excitation"
-  parameter ElectricalMachines.ParameterRecords.SM_ElectricalExcitedData data
+  parameter ElectricalMachines.ParameterRecords.SM_ElectricalExcitedData data "Machine parameters"
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Magnetic.FundamentalWave.BasicMachines.SynchronousInductionMachines.SM_ElectricalExcited(
@@ -19,7 +19,7 @@ model SM_ElectricalExcited "Transient synchronous machine with electrical excita
     final Lssigma=data.Lssigma,
     final Lmd=data.Lmd,
     final Lmq=data.Lmq,
-    useDamperCage=data.useDamperCage,
+    final useDamperCage=UseDamperCage,
     final Lrsigmad=data.Lrsigmad,
     final Lrsigmaq=data.Lrsigmaq,
     final Rrd=data.Rrd,
@@ -36,6 +36,7 @@ model SM_ElectricalExcited "Transient synchronous machine with electrical excita
     final statorCoreParameters=data.statorCoreParameters,
     final strayLoadParameters=data.strayLoadParameters,
     final brushParameters=data.brushParameters);
+  parameter Boolean UseDamperCage=data.useDamperCage "Enable/disable damper cage";
   annotation(defaultComponentName="smee", Documentation(info="<html>
 <p>
 Transient synchronous machine with electrical excitation based on FundamentalWave theory and parameter record

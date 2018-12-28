@@ -1,6 +1,6 @@
 within ElectricalMachines.QuasiStatic.FundamentalWave;
 model IM_SquirrelCage "Quasistatic induction machine with squirrel cage"
-  parameter ElectricalMachines.ParameterRecords.IM_SquirrelCageData data
+  parameter ElectricalMachines.ParameterRecords.IM_SquirrelCageData data "Machine parameters"
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Magnetic.QuasiStatic.FundamentalWave.BasicMachines.InductionMachines.IM_SquirrelCage(

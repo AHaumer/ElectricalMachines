@@ -12,7 +12,7 @@ record SM_PermanentMagnetData "Parameters for synchronous machines with permanen
   //nominal parameter(s)
   parameter Modelica.SIunits.Temperature TrNominal=TrRef
     "Nominal rotor temperature"
-    annotation (Dialog(tab="Nominal parameters", enable=useDamperCage));
+    annotation (Dialog(tab="Nominal parameters", group="Nominal temperatures", enable=useDamperCage));
   //losses
   parameter
     Modelica.Electrical.Machines.Losses.PermanentMagnetLossParameters permanentMagnetLossParameters(

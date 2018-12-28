@@ -7,7 +7,7 @@ model DCEE_NominalOperation "Nominal operation of dc machine with electrical exc
     Modelica.Electrical.Machines.Thermal.convertResistance(
     dcee.data.Re, dcee.data.TeRef, dcee.data.alpha20e, dcee.data.TeNominal)*dcee.data.IeNominal
     "Nominal excitation voltage";
-  .ElectricalMachines.QuasiStatic.DCMachines.DC_ElectricalExcited dcee(
+  ElectricalMachines.QuasiStatic.DCMachines.DC_ElectricalExcited dcee(
       phiMechanical(fixed=true), wMechanical(fixed=true, start=dcee.data.wNominal))
     annotation (Placement(transformation(extent={{-30,-20},{-10,0}})));
   Modelica.Electrical.Analog.Sensors.CurrentSensor currentSensor annotation (

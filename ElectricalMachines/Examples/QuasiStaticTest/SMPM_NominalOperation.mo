@@ -5,7 +5,7 @@ model SMPM_NominalOperation "Nominal operation of synchronous machine with perma
   import Modelica.Utilities.Streams.print;
   import Modelica.SIunits.Conversions.to_deg;
   Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
-  .ElectricalMachines.QuasiStatic.FundamentalWave.SM_PermanentMagnet smpm(gammar(
+  ElectricalMachines.QuasiStatic.FundamentalWave.SM_PermanentMagnet smpm(gammar(
         fixed=true, start=pi/2 + smpm.data.gammaNominal),
                                     wMechanical(fixed=true, start=smpm.data.wNominal))
     annotation (Placement(transformation(extent={{-30,-20},{-10,0}})));

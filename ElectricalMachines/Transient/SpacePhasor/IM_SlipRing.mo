@@ -1,6 +1,6 @@
 within ElectricalMachines.Transient.SpacePhasor;
 model IM_SlipRing "Transient induction machine with slipring rotor"
-  parameter ElectricalMachines.ParameterRecords.IM_SlipRingData data
+  parameter ElectricalMachines.ParameterRecords.IM_SlipRingData data "Machine parameters"
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Electrical.Machines.BasicMachines.AsynchronousInductionMachines.AIM_SlipRing(

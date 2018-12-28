@@ -5,21 +5,23 @@ record IM_SlipRingData "Parameters for induction machines with slip ring rotor"
     tauNominal=161.401185);
   import Modelica.Constants.pi;
   //common parameters
-  parameter Integer mr(final min=2)=3 "Number of rotor phases (m=3 for SpacePhasor machines)";
+  parameter Integer mr(final min=2)=3 "Number of rotor phases (m=3 for SpacePhasor machines)"
+    annotation(Dialog(group="Rotor"));
   parameter Boolean useTurnsRatio=true
-    "Use turnsRatio or calculate from locked-rotor voltage?";
+    "Use turnsRatio or calculate from locked-rotor voltage?"
+    annotation(Dialog(group="Rotor"));
   parameter Real turnsRatio(final min=Modelica.Constants.small)=VsNominal/VrLockedRotor*
     (2*pi*fsNominal*Lm)/sqrt(Rs^2 + (2*pi*fsNominal*(Lm + Lssigma))^2)
     "Effective number of stator turns / effective number of rotor turns"
-    annotation (Dialog(enable=useTurnsRatio));
+        annotation(Dialog(group="Rotor",enable=useTurnsRatio));
   parameter Modelica.SIunits.Voltage VrLockedRotor=VsNominal*
     (2*pi*fsNominal*Lm)/sqrt(Rs^2 + (2*pi*fsNominal*(Lm + Lssigma))^2)
     "Locked-rotor voltage per phase"
-    annotation (Dialog(enable=not useTurnsRatio));
+        annotation(Dialog(group="Rotor", enable=not useTurnsRatio));
   //nominal parameter(s)
   parameter Modelica.SIunits.Temperature TrNominal=TrRef
     "Nominal rotor temperature"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Nominal temperatures"));
   parameter Real s=1 - wNominal/(2*pi*fsNominal/p) "Nominal slip"
     annotation (Dialog(tab="Nominal parameters", enable=false));
   //resistances and inductances

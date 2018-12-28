@@ -1,6 +1,6 @@
 within ElectricalMachines.QuasiStatic.FundamentalWave;
 model SM_PermanentMagnet "Quasistatic synchronous machine with permanent magnets"
-  parameter ElectricalMachines.ParameterRecords.SM_PermanentMagnetData data
+  parameter ElectricalMachines.ParameterRecords.SM_PermanentMagnetData data "Machine parameters"
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Magnetic.QuasiStatic.FundamentalWave.BasicMachines.SynchronousMachines.SM_PermanentMagnet(
@@ -18,7 +18,7 @@ model SM_PermanentMagnet "Quasistatic synchronous machine with permanent magnets
     final Lssigma=data.Lssigma,
     final Lmd=data.Lmd,
     final Lmq=data.Lmq,
-    useDamperCage=data.useDamperCage,
+    final useDamperCage=UseDamperCage,
     final Lrsigmad=data.Lrsigmad,
     final Lrsigmaq=data.Lrsigmaq,
     final Rrd=data.Rrd,
@@ -29,6 +29,7 @@ model SM_PermanentMagnet "Quasistatic synchronous machine with permanent magnets
     final statorCoreParameters=data.statorCoreParameters,
     final strayLoadParameters=data.strayLoadParameters,
     final permanentMagnetLossParameters=data.permanentMagnetLossParameters);
+  parameter Boolean UseDamperCage=data.useDamperCage "Enable/disable damper cage";
   annotation(defaultComponentName="smpm", Documentation(info="<html>
 <p>
 Quasistatic synchronous machine with permanent magnets based on FundamentalWave theory and parameter record

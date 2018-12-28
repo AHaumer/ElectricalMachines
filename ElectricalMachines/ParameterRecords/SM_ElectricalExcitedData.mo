@@ -12,7 +12,7 @@ record SM_ElectricalExcitedData "Parameters for synchronous machines with electr
     annotation (Dialog(tab="Nominal parameters"));
   parameter Modelica.SIunits.Temperature TeNominal=TeRef
     "Nominal excitation temperature"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Nominal temperatures"));
   //excitation
   parameter Modelica.SIunits.Current IeOpenCircuit=10
     "Open circuit excitation current @ nominal voltage and frequency"

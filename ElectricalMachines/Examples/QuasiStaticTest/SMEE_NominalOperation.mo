@@ -5,7 +5,7 @@ model SMEE_NominalOperation "Nominal operation of synchronous machine with elect
   import Modelica.Utilities.Streams.print;
   import Modelica.SIunits.Conversions.to_deg;
   Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
-  .ElectricalMachines.QuasiStatic.FundamentalWave.SM_ElectricalExcited smee(gammar(
+  ElectricalMachines.QuasiStatic.FundamentalWave.SM_ElectricalExcited smee(gammar(
         fixed=true, start=pi/2 + smee.data.gammaNominal),
                                     wMechanical(fixed=true, start=smee.data.wNominal))
     annotation (Placement(transformation(extent={{-30,-20},{-10,0}})));

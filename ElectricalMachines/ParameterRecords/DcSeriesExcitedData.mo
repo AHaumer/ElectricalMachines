@@ -11,7 +11,7 @@ record DcSeriesExcitedData "Parameters for DC machines with series excitation"
   //nominal parameter(s)
   parameter Modelica.SIunits.Temperature TeNominal=TeRef
     "Nominal series excitation temperature"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Nominal temperatures"));
   //series excitation
   parameter Modelica.SIunits.Resistance Re=0.01
     "Series excitation resistance at TRef"

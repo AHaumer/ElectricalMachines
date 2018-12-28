@@ -9,7 +9,7 @@ record SM_ReluctanceRotorData "Parameters for synchronous machines with reluctan
   //nominal parameter(s)
   parameter Modelica.SIunits.Temperature TrNominal=TrRef
     "Nominal rotor temperature"
-    annotation (Dialog(tab="Nominal parameters", enable=useDamperCage));
+    annotation (Dialog(tab="Nominal parameters", group="Nominal temperatures", enable=useDamperCage));
   parameter Modelica.SIunits.Angle gammaNominal=22.861535*pi/180
     "Nominal rotor angle"
     annotation (Dialog(tab="Nominal parameters"));

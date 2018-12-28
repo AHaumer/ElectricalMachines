@@ -5,27 +5,27 @@ record InductionMachineData "Common parameters for ac machines with rotating mag
   //common parameters
   parameter String machine="machine";
   parameter Integer m(final min=2)=3 "Number of phases (m=3 for SpacePhasor machines)";
+  parameter Integer p(min=1) = 2 "Number of pole pairs (Integer)";
   parameter Modelica.SIunits.Inertia Jr=0.29 "Rotor's moment of inertia";
   parameter Modelica.SIunits.Inertia Js=Jr "Stator's moment of inertia";
-  parameter Integer p(min=1) = 2 "Number of pole pairs (Integer)";
   //nominal parameters
   parameter Modelica.SIunits.Frequency fsNominal=50 "Nominal frequency"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Electrical parameters"));
   parameter Modelica.SIunits.Voltage VsNominal=100
     "Nominal stator voltage per phase"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Electrical parameters"));
   parameter Modelica.SIunits.Current IsNominal=100
     "Nominal stator current per phase"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Electrical parameters"));
   parameter Modelica.SIunits.AngularVelocity wNominal(displayUnit="rev/min")=2*pi*fsNominal/p
     "Nominal speed"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Mechanical parameters"));
   parameter Modelica.SIunits.Torque tauNominal
     "Nominal torque"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Mechanical parameters"));
   parameter Modelica.SIunits.Temperature TsNominal=TsRef
     "Nominal stator temperature"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Nominal temperatures"));
   //resistances and inductances
   parameter Modelica.SIunits.Resistance Rs=0.03
     "Stator resistance per phase at TRef"

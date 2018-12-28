@@ -7,7 +7,7 @@ record IM_SquirrelCageData "Parameters for induction machines with squirrel cage
   //nominal parameter(s)
   parameter Modelica.SIunits.Temperature TrNominal=TrRef
     "Nominal rotor temperature"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Nominal temperatures"));
   parameter Real s=1 - wNominal/(2*pi*fsNominal/p) "Nominal slip"
     annotation (Dialog(tab="Nominal parameters", enable=false));
   //resistances and inductances

@@ -9,24 +9,24 @@ record DcPermanentMagnetData "Parameters for DC machines with permanent magnet e
   //nominal parameters
   parameter Modelica.SIunits.Voltage VaNominal=100
     "Nominal armature voltage"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Electrical parameters"));
   parameter Modelica.SIunits.Current IaNominal=100
     "Nominal armature current (>0..Motor, <0..Generator)"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Electrical parameters"));
   parameter Modelica.SIunits.AngularVelocity wNominal(displayUnit="rev/min")=
        1425*2*pi/60 "Nominal speed"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Mechanical parameters"));
   parameter Modelica.SIunits.Torque tauNominal=63.6619772
     "Nominal torque"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Mechanical parameters"));
   parameter Modelica.SIunits.Voltage ViNominal=VaNominal -
       Modelica.Electrical.Machines.Thermal.convertResistance(Ra, TaRef, alpha20a, TaNominal)*IaNominal -
       Modelica.Electrical.Machines.Losses.DCMachines.brushVoltageDrop(brushParameters, IaNominal)
     "Nominal induced voltage"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Electrical parameters", enable=false));
   parameter Modelica.SIunits.Temperature TaNominal=TaRef
     "Nominal armature temperature"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Nominal temperatures"));
   //resistances and inductances
   parameter Modelica.SIunits.Resistance Ra=0.05
     "Armature resistance at TRef"

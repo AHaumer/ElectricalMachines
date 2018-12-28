@@ -2,13 +2,6 @@ within ElectricalMachines.Examples;
 package QuasiStaticTest "QuasiStatic test examples"
   extends Modelica.Icons.ExamplesPackage;
 
-
-
-
-
-
-
-
   annotation (Documentation(info="<html>
 <p>
 Test examples with quasistatic machine models

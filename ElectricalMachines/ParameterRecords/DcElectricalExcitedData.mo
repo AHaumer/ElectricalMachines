@@ -5,7 +5,7 @@ record DcElectricalExcitedData "Parameters for DC machines with electrical excit
   //nominal parameter(s)
   parameter Modelica.SIunits.Temperature TeNominal=TeRef
     "Nominal excitation temperature"
-    annotation (Dialog(tab="Nominal parameters"));
+    annotation (Dialog(tab="Nominal parameters", group="Nominal temperatures"));
   //excitation
   parameter Modelica.SIunits.Current IeNominal=1
     "Nominal excitation current" annotation (Dialog(tab="Excitation"));

@@ -1,6 +1,7 @@
 within ElectricalMachines.Transient.DCMachines;
 model DC_SeriesExcited "Transient dc machine with series magnets"
-  parameter ElectricalMachines.ParameterRecords.DcSeriesExcitedData data annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
+  parameter ElectricalMachines.ParameterRecords.DcSeriesExcitedData data "Machine parameters"
+    annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Electrical.Machines.BasicMachines.DCMachines.DC_SeriesExcited(
     TaOperational=data.TaNominal,

@@ -1,6 +1,6 @@
 within ElectricalMachines.Transient.FundamentalWave;
 model SM_ReluctanceRotor "Transient synchronous machine with reluctance rotor"
-  parameter ElectricalMachines.ParameterRecords.SM_ReluctanceRotorData data
+  parameter ElectricalMachines.ParameterRecords.SM_ReluctanceRotorData data "Machine parameters"
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Magnetic.FundamentalWave.BasicMachines.SynchronousInductionMachines.SM_ReluctanceRotor(
@@ -18,7 +18,7 @@ model SM_ReluctanceRotor "Transient synchronous machine with reluctance rotor"
     final Lssigma=data.Lssigma,
     final Lmd=data.Lmd,
     final Lmq=data.Lmq,
-    useDamperCage=data.useDamperCage,
+    final useDamperCage=UseDamperCage,
     final Lrsigmad=data.Lrsigmad,
     final Lrsigmaq=data.Lrsigmaq,
     final Rrd=data.Rrd,
@@ -28,6 +28,7 @@ model SM_ReluctanceRotor "Transient synchronous machine with reluctance rotor"
     final frictionParameters=data.frictionParameters,
     final statorCoreParameters=data.statorCoreParameters,
     final strayLoadParameters=data.strayLoadParameters);
+  parameter Boolean UseDamperCage=data.useDamperCage "Enable/disable damper cage";
   annotation(defaultComponentName="smr", Documentation(info="<html>
 <p>
 Transient synchronous machine with reluctance rotor based on FundamentalWave theory and parameter record

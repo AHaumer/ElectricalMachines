@@ -3,7 +3,7 @@ model DCSE_NominalOperation "Nominal operation of dc machine with series excitat
   extends Modelica.Icons.Example;
   import Modelica.Utilities.Streams.print;
   import Modelica.SIunits.Conversions.to_rpm;
-  .ElectricalMachines.QuasiStatic.DCMachines.DC_SeriesExcited dcse(
+  ElectricalMachines.QuasiStatic.DCMachines.DC_SeriesExcited dcse(
       phiMechanical(fixed=true), wMechanical(fixed=true, start=dcse.data.wNominal))
     annotation (Placement(transformation(extent={{-30,-20},{-10,0}})));
   Modelica.Electrical.Analog.Sensors.CurrentSensor currentSensor annotation (

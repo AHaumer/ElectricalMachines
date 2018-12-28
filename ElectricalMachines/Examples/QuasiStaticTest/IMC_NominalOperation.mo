@@ -5,7 +5,7 @@ model IMC_NominalOperation "Nominal operation of induction machine with squirrel
   import Modelica.Utilities.Streams.print;
   import Modelica.SIunits.Conversions.to_rpm;
   Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
-  .ElectricalMachines.QuasiStatic.FundamentalWave.IM_SquirrelCage imc(gamma(
+  ElectricalMachines.QuasiStatic.FundamentalWave.IM_SquirrelCage imc(gamma(
         fixed=true), wMechanical(fixed=true, start=imc.data.wNominal))
     annotation (Placement(transformation(extent={{-30,-20},{-10,0}})));
   Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox

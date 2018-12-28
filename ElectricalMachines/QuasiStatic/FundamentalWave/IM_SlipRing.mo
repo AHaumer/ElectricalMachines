@@ -1,6 +1,6 @@
 within ElectricalMachines.QuasiStatic.FundamentalWave;
 model IM_SlipRing "Quasistatic induction machine with slipring rotor"
-  parameter ElectricalMachines.ParameterRecords.IM_SlipRingData data
+  parameter ElectricalMachines.ParameterRecords.IM_SlipRingData data "Machine parameters"
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Magnetic.QuasiStatic.FundamentalWave.BasicMachines.InductionMachines.IM_SlipRing(
