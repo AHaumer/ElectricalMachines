@@ -1,5 +1,5 @@
 within ElectricalMachines.Transient.DCMachines;
-model DC_PermanentMagnet
+model DC_PermanentMagnet "Transient dc machine with permanent magnets"
   parameter ElectricalMachines.ParameterRecords.DcPermanentMagnetData data annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Electrical.Machines.BasicMachines.DCMachines.DC_PermanentMagnet(
@@ -18,5 +18,9 @@ model DC_PermanentMagnet
     final coreParameters=data.coreParameters,
     final strayLoadParameters=data.strayLoadParameters,
     final brushParameters=data.brushParameters);
-  annotation(defaultComponentName="dcpm");
+  annotation(defaultComponentName="dcpm", Documentation(info="<html>
+<p>
+Transient dc machine with permanent magnets and parameter record
+</p>
+</html>"));
 end DC_PermanentMagnet;

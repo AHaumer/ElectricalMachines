@@ -1,5 +1,5 @@
 within ElectricalMachines.ParameterRecords.IMCdata;
-record Imc112M04
+record Imc112M04 "Induction machine with squirrel cage, frame size 112M, 4 poles, 4 kW"
   import Modelica.Constants.pi;
   import Modelica.Electrical.Machines.Thermal.Constants;
   extends IM_SquirrelCageData(
@@ -25,5 +25,16 @@ record Imc112M04
   frictionParameters(PRef=60),
   statorCoreParameters(PRef=90),
   strayLoadParameters(PRef=20));
-  annotation(defaultComponentName="imcData", defaultComponentPrefixes="parameter");
+  annotation(defaultComponentName="imcData", defaultComponentPrefixes="parameter",
+    Documentation(info="<html>
+<p>
+Parameters of an induction machine with quirrel cage:
+<ul>
+<li>frame size 112M</li>
+<li>4 poles</li>
+<li>4 kW</li>
+<li>400 V Y / 50 Hz</li>
+</ul>
+</p>
+</html>"));
 end Imc112M04;

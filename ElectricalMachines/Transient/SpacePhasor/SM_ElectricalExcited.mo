@@ -1,5 +1,5 @@
 within ElectricalMachines.Transient.SpacePhasor;
-model SM_ElectricalExcited
+model SM_ElectricalExcited "Transient synchronous machine with electrical excitation"
   parameter ElectricalMachines.ParameterRecords.SM_ElectricalExcitedData data
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
@@ -35,5 +35,9 @@ model SM_ElectricalExcited
     final statorCoreParameters=data.statorCoreParameters,
     final strayLoadParameters=data.strayLoadParameters,
     final brushParameters=data.brushParameters);
-  annotation(defaultComponentName="smee");
+  annotation(defaultComponentName="smee", Documentation(info="<html>
+<p>
+Transient synchronous machine with electrical excitation based on SpacePhasor theory and parameter record
+</p>
+</html>"));
 end SM_ElectricalExcited;

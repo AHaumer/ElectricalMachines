@@ -1,5 +1,5 @@
 within ElectricalMachines.QuasiStatic.FundamentalWave;
-model SM_ReluctanceRotor
+model SM_ReluctanceRotor "Quasistatic synchronous machine with reluctance rotor"
   parameter ElectricalMachines.ParameterRecords.SM_ReluctanceRotorData data
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
@@ -27,5 +27,9 @@ model SM_ReluctanceRotor
     final frictionParameters=data.frictionParameters,
     final statorCoreParameters=data.statorCoreParameters,
     final strayLoadParameters=data.strayLoadParameters);
-  annotation(defaultComponentName="smr");
+  annotation(defaultComponentName="smr", Documentation(info="<html>
+<p>
+Quasistatic synchronous machine with reluctance rotor based on FundamentalWave theory and parameter record
+</p>
+</html>"));
 end SM_ReluctanceRotor;

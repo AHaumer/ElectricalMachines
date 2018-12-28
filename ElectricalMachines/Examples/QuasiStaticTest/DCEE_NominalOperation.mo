@@ -1,5 +1,5 @@
-within ElectricalMachines.Examples.QuasiStatic;
-model DCEE_NominalOperation
+within ElectricalMachines.Examples.QuasiStaticTest;
+model DCEE_NominalOperation "Nominal operation of dc machine with electrical excitation"
   extends Modelica.Icons.Example;
   import Modelica.Utilities.Streams.print;
   import Modelica.SIunits.Conversions.to_rpm;
@@ -65,5 +65,10 @@ equation
     annotation (Line(points={{59,-10},{52,-10}}, color={0,0,127}));
   connect(currentSensor.i, controller.u) annotation (Line(points={{-4,30},{90,30},
           {90,-10},{82,-10}}, color={0,0,127}));
-  annotation (experiment(Interval=0.001, Tolerance=1e-06));
+  annotation (experiment(Interval=0.001, Tolerance=1e-06), Documentation(info=
+         "<html>
+<p>
+Nominal operation of quasistatic dc machine with electrical excitation based on nominal armature current
+</p>
+</html>"));
 end DCEE_NominalOperation;

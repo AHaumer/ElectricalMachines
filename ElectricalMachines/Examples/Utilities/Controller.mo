@@ -1,5 +1,5 @@
-within ElectricalMachines.Utilities;
-block Controller
+within ElectricalMachines.Examples.Utilities;
+block Controller "Universal controller for iteration"
   extends Modelica.Blocks.Interfaces.SISO;
   parameter Real reference "Constant reference value";
   parameter Modelica.SIunits.Time Ti=1e-3 "Integral time constant";

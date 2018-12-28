@@ -2,9 +2,6 @@ within ElectricalMachines.Transient;
 package FundamentalWave "Transient AC machines based on the Fundamental Wave of rotating magnetic field"
   extends Modelica.Icons.Package;
 
-
-
-
   annotation (Icon(graphics={
         Rectangle(
           extent={{-60,70},{-80,-50}},
@@ -31,5 +28,9 @@ package FundamentalWave "Transient AC machines based on the Fundamental Wave of 
               {60,-90},{-70,-90},{-70,-80}},
           lineColor={0,0,0},
           fillColor={0,0,0},
-          fillPattern=FillPattern.Solid)}));
+          fillPattern=FillPattern.Solid)}), Documentation(info="<html>
+<p>
+Transient ac machine models with rotating magnetic field based on FundamentalWave models with parameter records
+</p>
+</html>"));
 end FundamentalWave;

@@ -1,5 +1,5 @@
 within ElectricalMachines.QuasiStatic.FundamentalWave;
-model IM_SlipRing
+model IM_SlipRing "Quasistatic induction machine with slipring rotor"
   parameter ElectricalMachines.ParameterRecords.IM_SlipRingData data
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
@@ -29,5 +29,9 @@ model IM_SlipRing
     final statorCoreParameters=data.statorCoreParameters,
     final strayLoadParameters=data.strayLoadParameters,
     final rotorCoreParameters=data.rotorCoreParameters);
-  annotation(defaultComponentName="ims");
+  annotation(defaultComponentName="ims", Documentation(info="<html>
+<p>
+Quasistatic induction machine with slipring rotor based on FundamentalWave theory and parameter record
+</p>
+</html>"));
 end IM_SlipRing;

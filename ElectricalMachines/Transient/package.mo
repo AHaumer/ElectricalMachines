@@ -2,7 +2,6 @@ within ElectricalMachines;
 package Transient "Transient Machine Models"
   extends Modelica.Icons.Package;
 
-
   annotation (Icon(graphics={
         Rectangle(
           origin={0.835,10},

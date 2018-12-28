@@ -25,5 +25,9 @@ package QuasiStatic "Quasistatic Machine Models"
               {60,-90},{-70,-90},{-70,-80}},
               lineColor={0,0,0},
               fillColor={0,0,0},
-              fillPattern=FillPattern.Solid)}));
+              fillPattern=FillPattern.Solid)}), Documentation(info="<html>
+<p>
+Quasistatic machine models with parameter records
+</p>
+</html>"));
 end QuasiStatic;

@@ -2,9 +2,6 @@ within ElectricalMachines.QuasiStatic;
 package FundamentalWave "Quasistatic AC machines based on the Fundamental Wave of rotating magnetic field"
   extends Modelica.Icons.Package;
 
-
-
-
   annotation (Icon(graphics={
         Rectangle(
           extent={{-58,70},{-78,-50}},
@@ -31,5 +28,9 @@ package FundamentalWave "Quasistatic AC machines based on the Fundamental Wave o
               {62,-90},{-68,-90},{-68,-80}},
           lineColor={0,0,0},
           fillColor={0,0,0},
-          fillPattern=FillPattern.Solid)}));
+          fillPattern=FillPattern.Solid)}), Documentation(info="<html>
+<p>
+Quasistatic ac machine models with rotating magnetic field with parameter records
+</p>
+</html>"));
 end FundamentalWave;

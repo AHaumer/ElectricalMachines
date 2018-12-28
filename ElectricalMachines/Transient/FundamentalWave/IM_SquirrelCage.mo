@@ -1,5 +1,5 @@
 within ElectricalMachines.Transient.FundamentalWave;
-model IM_SquirrelCage
+model IM_SquirrelCage "Transient induction machine with squirrel cage"
   parameter ElectricalMachines.ParameterRecords.IM_SquirrelCageData data
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
@@ -24,5 +24,9 @@ model IM_SquirrelCage
     final frictionParameters=data.frictionParameters,
     final statorCoreParameters=data.statorCoreParameters,
     final strayLoadParameters=data.strayLoadParameters);
-  annotation(defaultComponentName="imc");
+  annotation(defaultComponentName="imc", Documentation(info="<html>
+<p>
+Transient induction machine with squirrel cage based on FundamentalWave theory and parameter record
+</p>
+</html>"));
 end IM_SquirrelCage;

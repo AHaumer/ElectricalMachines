@@ -1,5 +1,5 @@
 within ElectricalMachines.Transient.DCMachines;
-model DC_SeriesExcited
+model DC_SeriesExcited "Transient dc machine with series magnets"
   parameter ElectricalMachines.ParameterRecords.DcSeriesExcitedData data annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
     Modelica.Electrical.Machines.BasicMachines.DCMachines.DC_SeriesExcited(
@@ -25,5 +25,9 @@ model DC_SeriesExcited
     final alpha20e=data.alpha20e,
     final Le=data.Le,
     final sigmae=data.sigmae);
-  annotation(defaultComponentName="dcse");
+  annotation(defaultComponentName="dcse", Documentation(info="<html>
+<p>
+Transient dc machine with series excitation and parameter record
+</p>
+</html>"));
 end DC_SeriesExcited;

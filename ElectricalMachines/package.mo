@@ -2,8 +2,6 @@ within ;
 package ElectricalMachines "Electrical machine models with Parameter records"
   extends Modelica.Icons.Package;
 
-
-
   annotation (version="0.9.0", versionDate="2018-12-28", uses(Modelica(version="3.2.2")),
     Icon(graphics={
         Rectangle(

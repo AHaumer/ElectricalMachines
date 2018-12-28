@@ -1,5 +1,5 @@
-within ElectricalMachines.Examples.QuasiStatic;
-model SMPM_NominalOperation
+within ElectricalMachines.Examples.QuasiStaticTest;
+model SMPM_NominalOperation "Nominal operation of synchronous machine with permanent magnets"
   extends Modelica.Icons.Example;
   import Modelica.Constants.pi;
   import Modelica.Utilities.Streams.print;
@@ -78,5 +78,10 @@ equation
     annotation (Line(points={{59,-10},{52,-10}}, color={0,0,127}));
   connect(currentQuasiRMSSensor.I, controller.u) annotation (Line(points={{-10,30},
           {90,30},{90,-10},{82,-10}}, color={0,0,127}));
-  annotation (experiment(Interval=0.001, Tolerance=1e-06));
+  annotation (experiment(Interval=0.001, Tolerance=1e-06), Documentation(info=
+         "<html>
+<p>
+Nominal operation of quasistatic synchronous machine with permanent magnets based on nominal stator current
+</p>
+</html>"));
 end SMPM_NominalOperation;

@@ -1,5 +1,5 @@
 within ElectricalMachines.ParameterRecords;
-record InductionMachineData "Common parameters for induction machines"
+record InductionMachineData "Common parameters for ac machines with rotating magnetic field"
   extends Modelica.Icons.Record;
   import Modelica.Constants.pi;
   //common parameters
@@ -61,7 +61,7 @@ record InductionMachineData "Common parameters for induction machines"
     defaultComponentName="inductionMachineData",
     defaultComponentPrefixes="parameter",
     Documentation(info="<html>
-<p>Basic parameters of induction machines are predefined with default values.</p>
+<p>Basic parameters of ac machines with rotating magnetic field are predefined with default values.</p>
 </html>"),
     Icon(graphics={Text(
           extent={{-100,0},{100,-50}},

@@ -1,5 +1,5 @@
 within ElectricalMachines.Transient.FundamentalWave;
-model SM_PermanentMagnet
+model SM_PermanentMagnet "Transient synchronous machine with permanent magnets"
   parameter ElectricalMachines.ParameterRecords.SM_PermanentMagnetData data
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
   extends
@@ -30,5 +30,9 @@ model SM_PermanentMagnet
     final statorCoreParameters=data.statorCoreParameters,
     final strayLoadParameters=data.strayLoadParameters,
     final permanentMagnetLossParameters=data.permanentMagnetLossParameters);
-  annotation(defaultComponentName="smpm");
+  annotation(defaultComponentName="smpm", Documentation(info="<html>
+<p>
+Transient synchronous machine with permanent magnets based on FundamentalWave theory and parameter record
+</p>
+</html>"));
 end SM_PermanentMagnet;
