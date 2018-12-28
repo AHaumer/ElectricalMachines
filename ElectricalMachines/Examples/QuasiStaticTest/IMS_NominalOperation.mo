@@ -4,9 +4,9 @@ model IMS_NominalOperation "Nominal operation of induction machine with slipring
   import Modelica.Constants.pi;
   import Modelica.Utilities.Streams.print;
   import Modelica.SIunits.Conversions.to_rpm;
-  Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
-  ElectricalMachines.QuasiStatic.FundamentalWave.IM_SlipRing ims(gamma(
-        fixed=true), wMechanical(fixed=true, start=ims.data.wNominal))
+  Real pf=Utilities.ratio(powerSensor.P, powerSensor.S) "Power factor";
+  ElectricalMachines.QuasiStatic.FundamentalWave.IM_SlipRing ims(
+    gamma(fixed=true), wMechanical(fixed=true, start=ims.data.wNominal))
     annotation (Placement(transformation(extent={{-30,-20},{-10,0}})));
   Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
     terminalBox(m=ims.m, terminalConnection="Y")
@@ -48,8 +48,7 @@ model IMS_NominalOperation "Nominal operation of induction machine with slipring
         origin={-50,-20})));
   Modelica.Electrical.QuasiStationary.SinglePhase.Basic.Ground groundR
     annotation (Placement(transformation(extent={{-60,-60},{-40,-40}})));
-  Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
-    powerSensor
+  Utilities.QsPowerSensor powerSensor(m=ims.m)
     annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
   Utilities.Controller controller(reference=ims.data.IsNominal, y0=ims.data.tauNominal)
     annotation (Placement(transformation(extent={{80,-20},{60,0}})));

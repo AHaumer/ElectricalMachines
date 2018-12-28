@@ -4,10 +4,10 @@ model SMEE_NominalOperation "Nominal operation of synchronous machine with elect
   import Modelica.Constants.pi;
   import Modelica.Utilities.Streams.print;
   import Modelica.SIunits.Conversions.to_deg;
-  Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
-  ElectricalMachines.QuasiStatic.FundamentalWave.SM_ElectricalExcited smee(gammar(
-        fixed=true, start=pi/2 + smee.data.gammaNominal),
-                                    wMechanical(fixed=true, start=smee.data.wNominal))
+  Real pf=Utilities.ratio(powerSensor.P, powerSensor.S) "Power factor";
+  ElectricalMachines.QuasiStatic.FundamentalWave.SM_ElectricalExcited smee(
+    gammar(fixed=true, start=pi/2 + smee.data.gammaNominal),
+    wMechanical(fixed=true, start=smee.data.wNominal))
     annotation (Placement(transformation(extent={{-30,-20},{-10,0}})));
   Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
     terminalBox(m=smee.m, terminalConnection="Y")
@@ -37,8 +37,7 @@ model SMEE_NominalOperation "Nominal operation of synchronous machine with elect
     annotation (Placement(transformation(extent={{0,-20},{20,0}})));
   Modelica.Mechanics.Rotational.Sources.Torque torque
     annotation (Placement(transformation(extent={{50,-20},{30,0}})));
-  Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
-    powerSensor(m=smee.m)
+  Utilities.QsPowerSensor powerSensor(m=smee.m)
     annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
   Modelica.Electrical.Analog.Basic.Ground groundE
     annotation (Placement(transformation(extent={{-60,-60},{-40,-40}})));

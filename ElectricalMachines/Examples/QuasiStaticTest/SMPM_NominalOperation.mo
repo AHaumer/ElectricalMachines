@@ -4,10 +4,10 @@ model SMPM_NominalOperation "Nominal operation of synchronous machine with perma
   import Modelica.Constants.pi;
   import Modelica.Utilities.Streams.print;
   import Modelica.SIunits.Conversions.to_deg;
-  Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
-  ElectricalMachines.QuasiStatic.FundamentalWave.SM_PermanentMagnet smpm(gammar(
-        fixed=true, start=pi/2 + smpm.data.gammaNominal),
-                                    wMechanical(fixed=true, start=smpm.data.wNominal))
+  Real pf=Utilities.ratio(powerSensor.P, powerSensor.S) "Power factor";
+  ElectricalMachines.QuasiStatic.FundamentalWave.SM_PermanentMagnet smpm(
+    gammar(fixed=true, start=pi/2 + smpm.data.gammaNominal),
+    wMechanical(fixed=true, start=smpm.data.wNominal))
     annotation (Placement(transformation(extent={{-30,-20},{-10,0}})));
   Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
     terminalBox(m=smpm.m, terminalConnection="Y")
@@ -37,8 +37,7 @@ model SMPM_NominalOperation "Nominal operation of synchronous machine with perma
     annotation (Placement(transformation(extent={{0,-20},{20,0}})));
   Modelica.Mechanics.Rotational.Sources.Torque torque
     annotation (Placement(transformation(extent={{50,-20},{30,0}})));
-  Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
-    powerSensor(m=smpm.m)
+  Utilities.QsPowerSensor powerSensor(m=smpm.m)
     annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
   Utilities.Controller controller(reference=smpm.data.IsNominal, y0=smpm.data.tauNominal)
     annotation (Placement(transformation(extent={{80,-20},{60,0}})));

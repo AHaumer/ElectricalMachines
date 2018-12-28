@@ -5,10 +5,9 @@ model IMC_NominalOperation
   import Modelica.Constants.pi;
   import Modelica.Utilities.Streams.print;
   import Modelica.SIunits.Conversions.to_rpm;
-  Real pf=powerSensor.y.re/powerSensor.abs_y "Power factor";
+  Real pf=Utilities.ratio(powerSensor.P, powerSensor.S) "Power factor";
   ElectricalMachines.QuasiStatic.FundamentalWave.IM_SquirrelCage imc(
-    data=data,                                                        gamma(
-        fixed=true), wMechanical(fixed=true, start=imc.data.wNominal))
+    data=data, gamma(fixed=true), wMechanical(fixed=true, start=imc.data.wNominal))
     annotation (Placement(transformation(extent={{-30,-20},{-10,0}})));
   Modelica.Magnetic.QuasiStatic.FundamentalWave.Utilities.TerminalBox
     terminalBox(m=imc.m, terminalConnection="Y")
@@ -38,8 +37,7 @@ model IMC_NominalOperation
     annotation (Placement(transformation(extent={{0,-20},{20,0}})));
   Modelica.Mechanics.Rotational.Sources.Torque torque
     annotation (Placement(transformation(extent={{50,-20},{30,0}})));
-  Modelica.Electrical.QuasiStationary.MultiPhase.Sensors.PowerSensor
-    powerSensor
+  Utilities.QsPowerSensor powerSensor(m=imc.m)
     annotation (Placement(transformation(extent={{-60,30},{-40,50}})));
   Utilities.Controller controller(reference=7500, y0=imc.data.tauNominal)
     annotation (Placement(transformation(extent={{80,-20},{60,0}})));
