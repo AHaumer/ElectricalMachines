@@ -17,6 +17,9 @@ record InductionMachineData "Common parameters for ac machines with rotating mag
   parameter Modelica.SIunits.Current IsNominal=100
     "Nominal stator current per phase"
     annotation (Dialog(tab="Nominal parameters", group="Electrical parameters"));
+  parameter Modelica.SIunits.AngularVelocity wSyn(displayUnit="rev/min")=2*pi*fsNominal/p
+    "Nominal speed"
+    annotation (Dialog(tab="Nominal parameters", group="Electrical parameters"));
   parameter Modelica.SIunits.AngularVelocity wNominal(displayUnit="rev/min")=2*pi*fsNominal/p
     "Nominal speed"
     annotation (Dialog(tab="Nominal parameters", group="Mechanical parameters"));
