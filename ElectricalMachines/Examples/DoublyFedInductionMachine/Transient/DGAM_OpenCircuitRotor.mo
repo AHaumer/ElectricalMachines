@@ -2,6 +2,7 @@ within ElectricalMachines.Examples.DoublyFedInductionMachine.Transient;
 model DGAM_OpenCircuitRotor
   extends Modelica.Icons.Example;
   import Modelica.Constants.pi;
+  import Modelica.Electrical.Machines.SpacePhasors.Functions.Rotator;
   parameter ParameterRecords.IM_SlipRingData imsData(useTurnsRatio=false,
       VrLockedRotor=imsData.VsNominal)
     annotation (Placement(transformation(extent={{-10,-40},{10,-20}})));
@@ -56,6 +57,13 @@ model DGAM_OpenCircuitRotor
     annotation (Placement(transformation(extent={{70,-10},{50,10}})));
   Modelica.Electrical.MultiPhase.Basic.Resistor resistor(R=fill(1e6, 3))
     annotation (Placement(transformation(extent={{-50,-10},{-70,10}})));
+protected
+  Modelica.SIunits.Angle phi=2*pi*imsData.fsNominal*time;
+  Real RotationMatrix[2, 2]={{+cos(-phi),-sin(-phi)},{+sin(-phi),+cos(-phi)}};
+  Modelica.SIunits.Current is[2]=RotationMatrix*ims.idq_ss;
+  Modelica.SIunits.Current ir[2]=RotationMatrix*ims.idq_rs;
+initial equation
+  ir={-1e-4,0};
 equation
   connect(terminalBoxS.plug_sn, ims.plug_sn)
     annotation (Line(points={{-6,10},{-6,10}}, color={0,0,255}));
@@ -82,7 +90,7 @@ equation
   connect(starR.pin_n, groundR.p)
     annotation (Line(points={{-70,-30},{-70,-40}}, color={0,0,255}));
   connect(groundR.p, terminalBoxR.starpoint)
-    annotation (Line(points={{-70,-40},{-12,-40},{-12,-9}}, color={0,0,255}));
+    annotation (Line(points={{-70,-40},{-12,-40},{-12,-10}},color={0,0,255}));
   connect(speed.w_ref, ramp.y)
     annotation (Line(points={{42,0},{49,0}}, color={0,0,127}));
   connect(ims.flange, speed.flange)

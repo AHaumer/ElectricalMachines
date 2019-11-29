@@ -51,5 +51,5 @@ equation
   vRMS=sqrt(v_[1]^2 + v_[2]^2);
   iRMS=sqrt(i_[1]^2 + i_[2]^2);
   arg = if noEvent(v_[1] <= small) then 0 else Modelica.Math.atan2(v_[2], v_[1]);
-  2*pi*f = 0;//if noEvent(vRMS <= small) then 0 else sqrt((der(v_[1]) - der(vRMS)*cos(arg))^2 + (der(v_[2]) - der(vRMS)*sin(arg))^2)/vRMS;
+  2*pi*f = if noEvent(vRMS <= small) then 0 else sqrt((der(v_[1]) - der(vRMS)*cos(arg))^2 + (der(v_[2]) - der(vRMS)*sin(arg))^2)/vRMS;
 end Analyzer;
